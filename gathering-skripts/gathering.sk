@@ -28,8 +28,11 @@ function skGathering_messagePlayer(player: player, message: strings="Error in Pl
 function skGathering_messagePlayerNoPrefix(player: player, message: strings="Error in Player Message - No Input Given!", addNewline: boolean=false):
 	messagePlayer({_player}, {_message::*}, "", {_addNewline})
 
-function skGathering_messageDiscord(message: strings="Error in Player Message - No Input Given!", addNewline: boolean=false):
+function skGathering_messageDiscord(message: strings="Error in Discord Message - No Input Given!", addNewline: boolean=false):
 	messageDiscord({_message::*}, "1228051083419713638", {_addNewline})
 
-function skGathering_messageLogFile(message: strings="Error in Player Message - No Input Given!", addNewline: boolean=false, severity: string="NORMAL"):
+function skGathering_messageLogFile(message: strings="Error in Log File Message - No Input Given!", addNewline: boolean=false, severity: string="NORMAL"):
 	messageLogFile("GsK", {_message::*}, "gathering.log", {_addNewline}, {_severity})
+
+function skGathering_messageOutputFile(type: string="GeneralOutput", message: strings="Error in Output File Message - No Input Given!", addNewline: boolean=false):
+	messageLogFile("", {_message::*}, "gatheringoutput/%{_type}%.log", {_addNewline})
