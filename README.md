@@ -43,3 +43,15 @@ Based on all of the available data sources, the following raw features for each 
 These features will later be analyzed to identify which features are more important to predicting churn and which features are less important. It may be revealed that certain features have no effect at all, whereas other features have a much larger effect than expected. This is a secondary goal of this project.
 
 Beyond the collection of these raw features, other features will be derived for further model analysis. Because most of these derived metrics cannot be directly gathered from the server, there will be a big reliance in the data preparation and pre-processing phases of the model to create them. For instance, since the specific onlinetime of a player during a duration is not tracked, we must track it by regularly calculating the difference between two observations of the player's onlinetime. Ideally, this will be automatically calculated with respect to time for each model run, allowing for non-regular intervals to be used while necessary.
+
+## Data Collection and Preparation
+
+As previously mentioned, one of the largest challenges for this project is properly collecting player metrics from several sources on the server. To simplify collection as much as possible, Skript will be utilized to collect as much data as possible. This method is being chosen for a few reasons:
+
+1. Skript provides fast development
+2. Skript will allow for data to be collected from all three types of data sources: databases, Java plugins, and other Skript systems
+3. Skript makes it relatively easy to export data via a variety of methods
+
+To gather data for the model using Skript, several data-gathering skripts have been created. Some of these skripts are provided in [gathering-skripts](), although many will not be published due to the amount of customization, architecture, and credentials that would be released.
+
+Once the data has been gathered from the various sources into Skript (via some method), it can then be saved to some data storage so that it can be moved off of the server and prepared for the model.
