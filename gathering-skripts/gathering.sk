@@ -14,7 +14,18 @@ options:
 # Load-Up Events
 on script load:
 	# Log the script load in console
-	alts_messageLogFile("The Gathering Utilities Skript has been loaded on server %{server}%!")
+	skGathering_messageLogFile("The Gathering Utilities Skript has been loaded on server %{server}%!")
+
+	# Load UUID's for gathering player data
+	skGathering_loadUuidsFromEssentials()
+	skGathering_messageLogFile("-> Loaded all player UUID's from EssentialsX!")
+	
+
+# Skript Reflect Imports
+import:
+	org.bukkit.Bukkit
+	com.earth2me.essentials.Essentials
+	com.earth2me.essentials.BalanceTopImpl
 
 #####################
 # UTILITY FUNCTIONS #
@@ -36,3 +47,26 @@ function skGathering_messageLogFile(message: strings="Error in Log File Message 
 
 function skGathering_messageOutputFile(type: string="GeneralOutput", message: strings="Error in Output File Message - No Input Given!", addNewline: boolean=false):
 	messageLogFile("", {_message::*}, "gatheringoutput/%{_type}%.log", {_addNewline})
+
+#####################
+# SUPPORT FUNCTIONS #
+#####################
+
+# Updated the list of all UUID's that has joined the server based on the Essentials Baltop
+function skGathering_loadUuidsFromEssentials():
+
+	# Get the EssentialsX object from Bukkit's plugin manager
+	set {_essentials} to Bukkit.getPluginManager().getPlugin("Essentials")
+
+	# Get balance top object (BalanceTopImpl) from the EssentialsX object
+	set {_essentialsBalanceTop} to {_essentials}.[Essentials]getBalanceTop()
+
+	# Get the current balance top mapping (Map<UUID,BalanceTop.Entry>)
+	set {_essentialsBalanceMapping} to {_essentialsBalanceTop}.[BalanceTopImpl]getBalanceTopCache()
+
+	# Get the list of UUID's as a set (Set<UUID>)
+	set {_essentialsUuidSet} to {_essentialsBalanceMapping}.keySet()
+
+	# Get just the keys as UUID objects in a skript list
+	set {skgathering::uuids::*} to ...{_essentialsUuidSet}.toArray()
+
