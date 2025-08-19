@@ -46,7 +46,7 @@ function skGathering_messageLogFile(message: strings="Error in Log File Message 
 	messageLogFile("GsK", {_message::*}, "gathering.log", {_addNewline}, {_severity})
 
 function skGathering_messageOutputFile(type: string="GeneralOutput", message: strings="Error in Output File Message - No Input Given!", addNewline: boolean=false):
-	messageLogFile("", {_message::*}, "gatheringoutput/%{_type}%.log", {_addNewline})
+	log "%{_message}%" to "gatheringoutput/%{_type}%.log"
 
 #####################
 # SUPPORT FUNCTIONS #
@@ -69,4 +69,3 @@ function skGathering_loadUuidsFromEssentials():
 
 	# Get just the keys as UUID objects in a skript list
 	set {skgathering::uuids::*} to ...{_essentialsUuidSet}.toArray()
-
