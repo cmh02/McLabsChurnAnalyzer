@@ -13,7 +13,7 @@ options:
 # Load-Up Events
 on script load:
 	# Log the script load in console
-	alts_messageLogFile("The Gathering Balance Skript has been loaded on server %{server}%!")
+	skGathering_messageLogFile("The Gathering Balance Skript has been loaded on server %{server}%!")
 
 #######################
 # GATHERING FUNCTIONS #
@@ -27,11 +27,18 @@ function skGathering_writeBalancesToFile():
 		stop
 
 	# Loop over UUID's to get balances
+	clear {_balanceOutputData::*}
 	loop {skgathering::uuids::*}:
 
 		# Get the player's balance
 		set {_player} to offlineplayer(loop-value)
-		set {_balance} to {_player}'s balance
+		set {_balance} to "%{_player}'s balance%"
+		replace every "," with "" in {_balance}
+		replace every "$" with "" in {_balance}
 
-		# Write the data to output file in csv format
-		skGathering_messageOutputFile("balance", "%loop-value%,%{_balance}%")
+		# Prepare data in CSV format
+		add "%loop-value%,%{_balance}%" to {_balanceOutputData::*}
+
+	# Write all balance data to output file
+	set {_currentTime} to unix timestamp of now
+	skGathering_messageOutputFile("Balances_%{_currentTime}%", {_balanceOutputData::*})
