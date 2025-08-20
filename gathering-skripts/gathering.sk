@@ -23,6 +23,11 @@ on script load:
 
 # Skript Reflect Imports
 import:
+	java.io.File
+	java.io.FileWriter
+	java.io.BufferedWriter
+	java.io.IOException
+	java.io.FileNotFoundException
 	org.bukkit.Bukkit
 	com.earth2me.essentials.Essentials
 	com.earth2me.essentials.BalanceTopImpl
@@ -45,8 +50,43 @@ function skGathering_messageDiscord(message: strings="Error in Discord Message -
 function skGathering_messageLogFile(message: strings="Error in Log File Message - No Input Given!", addNewline: boolean=false, severity: string="NORMAL"):
 	messageLogFile("GsK", {_message::*}, "gathering.log", {_addNewline}, {_severity})
 
-function skGathering_messageOutputFile(type: string="GeneralOutput", message: strings="Error in Output File Message - No Input Given!", addNewline: boolean=false):
-	log "%{_message}%" to "gatheringoutput/%{_type}%.log"
+function skGathering_messageOutputFile(type: string="GeneralOutput", message: strings="Error in Output File Message - No Input Given!"):
+	# Create directory and file paths
+	set {_directoryPath} to "plugins/Skript/gatheringoutput/"
+	set {_filePath} to "%{_type}%.csv"
+
+	# Check if the directory exists, and if not, create it
+	set {_directoryAsFile} to new File({_directoryPath})
+	if {_directoryAsFile}.exists() is not true:
+		skGathering_messageLogFile("The output directory does not exist and will be created: %{_directoryPath}%", false, "WARNING")
+		set {_makeDirectoryResult} to try {_directoryAsFile}.mkdirs()
+	if the last java exception is set:
+		skGathering_messageLogFile("Error Code MOF1: A Java Exception was detected while trying to find and create output directory! %nl%MkDirs Result: %{_makeDirectoryResult}% %nl%Error: %the last java exception%", false, "SEVERE")
+		stop
+
+	# Check if the file exists, and if not, create it
+	set {_fileAsFile} to new File({_directoryPath}, {_filePath})
+	if {_fileAsFile}.exists() is not true:
+		skGathering_messageLogFile("The output file does not exist and will be created: %{_filePath}%", false, "WARNING")
+		set {_createFileResult} to try {_fileAsFile}.createNewFile()
+	if the last java exception is set:
+		skGathering_messageLogFile("Error Code MOF2: A Java Exception was detected while trying to find and create output file! %nl%CreateNewFile Result: %{_createFileResult}% %nl%Error: %the last java exception%", false, "SEVERE")
+		stop
+
+	# Create a BufferedWriter for the file and write all given strings as new lines to file
+	set {_fileWriter} to new FileWriter({_fileAsFile}, true)
+	set {_bufferedWriter} to new BufferedWriter({_fileWriter})
+	loop {_message::*}:
+		try {_bufferedWriter}.write(loop-value)
+		try {_bufferedWriter}.newLine()
+	try {_bufferedWriter}.close()
+	try {_fileWriter}.close()
+	if the last java exception is set:
+		skGathering_messageLogFile("Error Code MOF3: A Java Exception was detected while trying to write to output file! Error: %{the last java exception}%", false, "SEVERE")
+		stop
+
+	# Log file writing (execution would have stopped if an error occured)
+	skGathering_messageLogFile("Writing to output file `%{_filePath}%` has completed without error!", false, "NORMAL")
 
 #####################
 # SUPPORT FUNCTIONS #
