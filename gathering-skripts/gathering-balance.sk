@@ -26,8 +26,11 @@ function skGathering_writeBalancesToFile():
 		skGathering_messageLogFile("A call was made to get all player balance data, but UUID's have not been loaded yet!", false, "SEVERE")
 		stop
 
-	# Loop over UUID's to get balances
+	# Prepare data output list with headers
 	clear {_balanceOutputData::*}
+	add "UUID, balance" to {_balanceOutputData::*}
+
+	# Loop over UUID's to get balances
 	loop {skgathering::uuids::*}:
 
 		# Get the player's balance
