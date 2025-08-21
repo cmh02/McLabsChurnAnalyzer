@@ -109,3 +109,27 @@ function skGathering_loadUuidsFromEssentials():
 
 	# Get just the keys as UUID objects in a skript list
 	set {skgathering::uuids::*} to ...{_essentialsUuidSet}.toArray()
+
+################
+# MAIN COMMAND #
+################
+on tab complete of "/gatherdata":
+	set tab completions for position 1 to "balance", "plan"
+
+command /gatherdata [<text>]:
+	# Set the permission node to use gatherdata command
+	permission: skript.admin
+	# Set the permission error message for the gatherdata command
+	permission message: &cYou do not have permission to use this command!
+	# Sets the description for the gatherdata command
+	description: &7Allows you to generate player data and statistics.
+	# Main-Command: GatherData
+	trigger:
+		if arg 1 is "balance":
+			skGathering_messagePlayer(player, "&6Generating Balance Data!")
+			skGathering_writeBalancesToFile()
+		else if arg 1 is "plan":
+			skGathering_messagePlayer(player, "&6Generating Plan Data!")
+			skGathering_writePlanDataToFile()
+		else:
+			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance' or 'plan'.")
