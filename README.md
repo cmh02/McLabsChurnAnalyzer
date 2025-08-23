@@ -76,3 +76,11 @@ As previously mentioned, one of the largest challenges for this project is prope
 To gather data for the model using Skript, several data-gathering skripts have been created. Some of these skripts are provided in [gathering-skripts](gathering-skripts), although many will not be published due to the amount of customization, architecture, and credentials that would be released.
 
 Once the data has been gathered from the various sources into Skript (via some method), it can then be saved to some data storage so that it can be moved off of the server and prepared for the model.
+
+## Our Target: Player Churn
+
+For this project, our target variable is **player churn**, indicating whether or not a player will leave the server or continue playing.
+
+To identify whether or not a player has left the server, we analyze the player's last seen timestamp. We consider a player to be churned, or to have left, once they have been offline for 14 days. Since we want our model to also be able to make predictions based on the player's current time since last active, we cannot simply train the model to learn that more than 14 days is churn. Instead, we want the model to learn the patterns of a player prior to leaving the server, when they have been online within the past 14 days.
+
+In order to obtain proper data for training, we will collect initial training samples at two different times, three days apart. We will then identify which players in the first dataset were active within the past 14 days and in the second dataset were not active within the past 14 days. This will allow us to properly train the model on the first dataset and find which players have churned versus which players have been offline more than 14 days.
