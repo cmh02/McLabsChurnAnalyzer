@@ -1,0 +1,46 @@
+###
+Script: skGathering - Votes Skript
+Author: cmh02
+Version: 1.0
+
+This script will collect the votes of all players that have joined the server.
+###
+
+# Skript-Wide Options
+options:
+	labsprefix: <##00cdf6>&lMC<##00cdf6>&lL<##00b8e8>&la<##00a2da>&lb<##008dcc>&ls &f»
+
+# Load-Up Events
+on script load:
+	# Log the script load in console
+	skGathering_messageLogFile("The Gathering Votes Skript has been loaded on server %{server}%!")
+
+#######################
+# GATHERING FUNCTIONS #
+#######################
+
+function skGathering_writeVotesToFile():
+
+	# Make sure the list of UUID's has been loaded
+	if {skgathering::uuids::*} is not set:
+		skGathering_messageLogFile("A call was made to get all player votes data, but UUID's have not been loaded yet!", false, "SEVERE")
+		stop
+
+	# Prepare data output list with headers
+	clear {_votesOutputData::*}
+	add "UUID, current_month_votes" to {_votesOutputData::*}
+
+	# Loop over UUID's to get votes
+	loop {skgathering::uuids::*}:
+
+		# Get the player's votes for this voting event (month-year)
+		set {_player} to offlineplayer(loop-value)
+		set {_monthYearFormatted} to lowercase (now formatted as "MMMMyy")
+		set {_votes} to voteclaim_event_get({_player}, {_monthYearFormatted})
+
+		# Prepare data in CSV format
+		add "%loop-value%,%{_votes}%" to {_votesOutputData::*}
+
+	# Write all votes data to output file
+	set {_currentTime} to unix timestamp of now
+	skGathering_messageOutputFile("Votes_%{_currentTime}%", {_votesOutputData::*})
