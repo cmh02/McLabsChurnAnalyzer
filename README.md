@@ -54,6 +54,6 @@ As previously mentioned, one of the largest challenges for this project is prope
 2. Skript will allow for data to be collected from all three types of data sources: databases, Java plugins, and other Skript systems
 3. Skript makes it relatively easy to export data via a variety of methods
 
-To gather data for the model using Skript, several data-gathering skripts have been created. Some of these skripts are provided in [gathering-skripts](), although many will not be published due to the amount of customization, architecture, and credentials that would be released.
+To gather data for the model using Skript, several data-gathering skripts have been created. Some of these skripts are provided in [gathering-skripts](gathering-skripts), although many will not be published due to the amount of customization, architecture, and credentials that would be released.
 
 Once the data has been gathered from the various sources into Skript (via some method), it can then be saved to some data storage so that it can be moved off of the server and prepared for the model.
