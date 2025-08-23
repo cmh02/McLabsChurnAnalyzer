@@ -37,6 +37,8 @@ function skGathering_writeVotesToFile():
 		set {_player} to offlineplayer(loop-value)
 		set {_monthYearFormatted} to lowercase (now formatted as "MMMMyy")
 		set {_votes} to voteclaim_event_get({_player}, {_monthYearFormatted})
+		if {_votes} is not set:
+			set {_votes} to 0
 
 		# Prepare data in CSV format
 		add "%loop-value%,%{_votes}%" to {_votesOutputData::*}
