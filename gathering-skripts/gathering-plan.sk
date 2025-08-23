@@ -30,7 +30,7 @@ function skGathering_writePlanDataToFile():
 
 	# Prepare data output list with headers
 	clear {_planDataOutputData::*}
-	add "UUID, plan_player_time_total_raw, plan_player_time_month_raw, plan_player_time_week_raw, plan_player_time_day_raw, plan_player_time_afk_raw, plan_player_latest_session_length_raw, plan_player_favorite_server, plan_player_lastseen" to {_planDataOutputData::*}
+	add "UUID, plan_player_time_total_raw, plan_player_time_month_raw, plan_player_time_week_raw, plan_player_time_day_raw, plan_player_time_afk_raw, plan_player_latest_session_length_raw, plan_player_favorite_server, plan_player_lastseen, plan_player_sessions_count" to {_planDataOutputData::*}
 
 	# Make section for querying placeholders in async
 	create new section with {_uuid} stored in {_getPlaceholdersForUuid}:
@@ -44,12 +44,13 @@ function skGathering_writePlanDataToFile():
 		set {_plan_player_latest_session_length_raw} to the placeholder "plan_player_latest_session_length_raw:%{_uuid}%"
 		set {_plan_player_favorite_server} to the placeholder "plan_player_favorite_server:%{_uuid}%"
 		set {_plan_player_lastseen} to the placeholder "plan_player_lastseen:%{_uuid}%"
+		set {_plan_player_sessions_count} to the placeholder "plan_player_sessions_count:%{_uuid}%"
 
 		# Remove certain parts of lastseen
 		replace every "," with "" in {_plan_player_lastseen}
 
 		# Return in single comma-delimited string
-		return "%{_plan_player_time_total_raw}%,%{_plan_player_time_month_raw}%,%{_plan_player_time_week_raw}%,%{_plan_player_time_day_raw}%,%{_plan_player_time_afk_raw}%,%{_plan_player_latest_session_length_raw}%,%{_plan_player_favorite_server}%,%{_plan_player_lastseen}%"
+		return "%{_plan_player_time_total_raw}%,%{_plan_player_time_month_raw}%,%{_plan_player_time_week_raw}%,%{_plan_player_time_day_raw}%,%{_plan_player_time_afk_raw}%,%{_plan_player_latest_session_length_raw}%,%{_plan_player_favorite_server}%,%{_plan_player_lastseen}%,%{_plan_player_sessions_count}%"
 
 
 	# Loop over UUID's to get plan player analytics
