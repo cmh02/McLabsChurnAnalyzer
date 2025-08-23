@@ -1,0 +1,48 @@
+###
+Script: skGathering - Leaderboard Skript
+Author: cmh02
+Version: 1.0
+
+This script will collect the leaderboard positions of all players that have joined the server.
+###
+
+# Skript-Wide Options
+options:
+	labsprefix: <##00cdf6>&lMC<##00cdf6>&lL<##00b8e8>&la<##00a2da>&lb<##008dcc>&ls &f»
+
+# Load-Up Events
+on script load:
+	# Log the script load in console
+	skGathering_messageLogFile("The Gathering Leaderboard Skript has been loaded on server %{server}%!")
+
+#######################
+# GATHERING FUNCTIONS #
+#######################
+
+function skGathering_writeLeaderboardToFile():
+
+	# Make sure the list of UUID's has been loaded
+	if {skgathering::uuids::*} is not set:
+		skGathering_messageLogFile("A call was made to get all player leaderboard data, but UUID's have not been loaded yet!", false, "SEVERE")
+		stop
+
+	# Prepare data output list with headers
+	clear {_leaderboardOutputData::*}
+	add "UUID, leaderboard_position_chems_all, leaderboard_position_chems_week, leaderboard_position_police_all, leaderboard_position_police_week" to {_leaderboardOutputData::*}
+
+	# Loop over UUID's to get leaderboard positions
+	loop {skgathering::uuids::*}:
+
+		# Get the player's leaderboard positions
+		set {_player} to offlineplayer(loop-value)
+		set {_leaderboard_position_chems_all} to leaderboard_place({_player}, "chems", "alltime")
+		set {_leaderboard_position_chems_week} to leaderboard_place({_player}, "chems", "week")
+		set {_leaderboard_position_police_all} to leaderboard_place({_player}, "police", "alltime")
+		set {_leaderboard_position_police_week} to leaderboard_place({_player}, "police", "week")
+
+		# Prepare data in CSV format
+		add "%loop-value%,%{_leaderboard_position_chems_all}%,%{_leaderboard_position_chems_week}%,%{_leaderboard_position_police_all}%,%{_leaderboard_position_police_week}%" to {_leaderboardOutputData::*}
+
+	# Write all leaderboard data to output file
+	set {_currentTime} to unix timestamp of now
+	skGathering_messageOutputFile("Leaderboards_%{_currentTime}%", {_leaderboardOutputData::*})
