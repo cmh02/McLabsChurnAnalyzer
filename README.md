@@ -6,6 +6,14 @@ Welcome to the [MCLabs](https://labs-mc.com/) (often shortened to MCL) Churn Ana
 
 This tool will implement a machine learning model to predict the churn of players based on player metrics. Initially, we will use a simple logistic regression model, but may move to a more advanced model at a later point in time.
 
+## Project Documentation Overview
+
+| Project Module    | README                                                                                           | Description                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Entire Project    | [README.md](README.md)                                                                              | The entire project repository including all modules below. |
+| Gathering Skripts | [ README_gatheringskripts.md](gathering-skripts/README_gatheringskripts.md "Gathering Skripts Readme") | Skripts to extract player data from the server.            |
+| Model             | [README_model.md](model-src/README_model.md "Model Readme")                                            | The Machine Learning Model                                 |
+
 ## Project Introduction
 
 The goal of this project is to be able to accurately predict player churn (whether a player has stopped playing on the server or not). The premise is that, based on player metrics captured on the server, a specific player can be identified as churned (no longer playing) or active (still playing).
