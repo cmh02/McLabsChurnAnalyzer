@@ -23,4 +23,6 @@ To save those unfamiliar with Skript, or further unfamiliar with skript-reflect,
 
 ## Missing Skript Resources
 
-The only resource missing from the provided gathering skripts is our `centraloutput` interface that defines common outputs such as server console, log files, discord, developers, players, etc. You can see the signature of several `centraloutput` utility functions in [gathering.sk](gathering.sk), where they are wrapped in gathering-specific utility functions that pre-define some of the needed arguments.
+`gathering.sk`: One resource missing from the provided gathering skripts is our `centraloutput `interface that defines common outputs such as server console, log files, discord, developers, players, etc. You can see the signature of several `centraloutput` utility functions in [gathering.sk](gathering.sk), where they are wrapped in gathering-specific utility functions that pre-define some of the needed arguments.
+
+`gathering-leaderboard.sk`: This skript utilizes a function that is provided by our internal leaderboard system, which is also built using Skript. The implementation of this is very similar to an API call - we simply provide a player, a leaderboard type, and a time span to the function call and receive a leaderboard position back.
