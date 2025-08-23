@@ -82,7 +82,7 @@ function skGathering_messageOutputFile(type: string="GeneralOutput", message: st
 	try {_bufferedWriter}.close()
 	try {_fileWriter}.close()
 	if the last java exception is set:
-		skGathering_messageLogFile("Error Code MOF3: A Java Exception was detected while trying to write to output file! Error: %{the last java exception}%", false, "SEVERE")
+		skGathering_messageLogFile("Error Code MOF3: A Java Exception was detected while trying to write to output file! Error: %the last java exception%", false, "SEVERE")
 		stop
 
 	# Log file writing (execution would have stopped if an error occured)
