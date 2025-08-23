@@ -18,8 +18,9 @@ on script load:
 
 	# Load UUID's for gathering player data
 	skGathering_loadUuidsFromEssentials()
-	skGathering_messageLogFile("-> Loaded all player UUID's from EssentialsX!")
-	
+	set {_numUuids} to amount of {skgathering::uuids::*}
+	skGathering_messageLogFile("-> Loaded %{_numUuids}% player UUID's from EssentialsX!")
+
 
 # Skript Reflect Imports
 import:
