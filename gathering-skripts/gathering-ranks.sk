@@ -1,0 +1,90 @@
+###
+Script: skGathering - Ranks Skript
+Author: cmh02
+Version: 1.0
+
+This script will get the chem rank, police rank, and donor rank of all players that have joined the server.
+###
+
+# Skript-Wide Options
+options:
+	labsprefix: <##00cdf6>&lMC<##00cdf6>&lL<##00b8e8>&la<##00a2da>&lb<##008dcc>&ls &f»
+
+# Load-Up Events
+on script load:
+	# Log the script load in console
+	skGathering_messageLogFile("The Gathering Ranks Skript has been loaded on server %{server}%!")
+
+#######################
+# GATHERING FUNCTIONS #
+#######################
+
+function skGathering_writeRanksToFile():
+
+	# Make sure the list of UUID's has been loaded
+	if {skgathering::uuids::*} is not set:
+		skGathering_messageLogFile("A call was made to get all player ranks data, but UUID's have not been loaded yet!", false, "SEVERE")
+		stop
+
+	# Prepare data output list with headers
+	clear {_ranksOutputData::*}
+	add "UUID, chemrank, policerank, donorrank" to {_ranksOutputData::*}
+
+	# Create lists of ranks and possible prestiges
+	set {_chemRanks::*} to "junky", "intern", "trainee", "assistant", "technician", "analyst", "engineer", "bioengineer", "chemist", "biochemist", "alchemist", "pharmacologist", "director"
+	set {_policeRanks::*} to "informant", "recruit", "cadet", "officer", "detective", "corporal", "sergeant", "lieutenant", "colonel", "commander", "deputychief", "chief", "commisioner"
+	set {_donorRanks::*} to "vip", "vipplus", "mvp", "mvpplus", "mvpplusplus"
+	set {_prestiges::*} to "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+
+	# Loop over UUID's to get leaderboard positions
+	loop {skgathering::uuids::*}:
+
+		# Create placeholder variables
+		set {_chemRankWeight} to 0
+		set {_policeRankWeight} to 0
+		set {_donorRankWeight} to 0
+
+		# Get the player's groups
+		set {_player} to offlineplayer(loop-value)
+		set {_playerGroups::*} to the groups of {_player}
+
+		# Determine if player has a chem rank
+		loop {_chemRanks::*}:
+			loop {_prestiges::*}:
+				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
+					set {_rankWeight} to loop-iteration-2
+					set {_prestigeWeight} to ((loop-iteration-3) - 1)
+					set {_chemRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
+					exit 3 sections
+
+		# Determine if player is max rank if no chem rank was found
+		if {_chemRankWeight} is 0:
+			if {_playerGroups::*} contains "maxrank":
+				set {_chemRankWeight} to 143
+
+		# Determine if player has a police rank
+		loop {_policeRanks::*}:
+			loop {_prestiges::*}:
+				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
+					set {_rankWeight} to loop-iteration-2
+					set {_prestigeWeight} to ((loop-iteration-3) - 1)
+					set {_policeRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
+					exit 3 sections
+
+		# Determine if player is max police rank if no police rank was found
+		if {_policeRankWeight} is 0:
+			if {_playerGroups::*} contains "maxcop":
+				set {_policeRankWeight} to 143
+
+		# Determine if player has a donor rank
+		loop {_donorRanks::*}:
+			if {_playerGroups::*} contains loop-value-2:
+				set {_donorRankWeight} to loop-iteration-2
+				exit loop
+
+		# Prepare data in CSV format
+		add "%loop-value%,%{_chemRankWeight}%,%{_policeRankWeight}%,%{_donorRankWeight}%" to {_ranksOutputData::*}
+
+	# Write all ranks data to output file
+	set {_currentTime} to unix timestamp of now
+	skGathering_messageOutputFile("Ranks_%{_currentTime}%", {_ranksOutputData::*})
