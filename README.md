@@ -40,15 +40,24 @@ Unfortunately, even among these types of data sources, the access for each indiv
 
 Based on all of the available data sources, the following raw features for each player are being selected for use in the model's predictions:
 
-|    Name    | Description                                                     |
-| :---------: | --------------------------------------------------------------- |
-|   balance   | The player's economy balance                                    |
-| onlinetime | The amount of time the player has spent on the server, in total |
-|    joins    | The number of times the player has joined the server            |
-| leaderboard | The general leaderboard score of the player                     |
-|  chemrank  | The player's chem rank                                          |
-|  donorrank  | The player's donor rank                                         |
-|    votes    | The number of times the player has voted                        |
+|          Name          | Description                                                                                                                                                                                                                                                |
+| :---------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|         balance         | The player's economy balance                                                                                                                                                                                                                               |
+|     total playtime     | The amount of time the player has spent on the server in total                                                                                                                                                                                             |
+|     month playtime     | The amount of time the player has spent on the server in the last month                                                                                                                                                                                    |
+|      week playtime      | The amount of time the player has spent on the server in the last week                                                                                                                                                                                     |
+|      day playtime      | The amount of time the player has spent on the server in the last week                                                                                                                                                                                     |
+|      afk playtime      | The amount of time the player has been AFK (logged in, but not active) on the server in total                                                                                                                                                              |
+| latest session playtime | The amount of time the player was online during their last login                                                                                                                                                                                           |
+|     favorite server     | The world that the player spends the most time in on the server                                                                                                                                                                                            |
+|        last seen        | The last time that the player was on the server                                                                                                                                                                                                            |
+|      session count      | The number of times the player has joined the server                                                                                                                                                                                                       |
+|    mcmmo power level    | The overall power level for a player in MCMMO.                                                                                                                                                                                                             |
+|    mcmmo skill level    | The skill level of a particular skill for a player in MCMMO. Valid skills are ACROBATICS, ALCHEMY, ARCHERY, AXES, CROSSBOWS, EXCAVATION, FISHING, HERBALISM, MACES, MINING, REPAIR, SALVAGE, SMELTING, SWORDS, TAMING, TRIDENTS, UNARMED and WOODCUTTING, |
+|       leaderboard       | The general leaderboard score of the player                                                                                                                                                                                                                |
+|        chemrank        | The player's chem (or police) rank                                                                                                                                                                                                                         |
+|        donorrank        | The player's donor rank                                                                                                                                                                                                                                    |
+|          votes          | The number of times the player has voted                                                                                                                                                                                                                   |
 
 These features will later be analyzed to identify which features are more important to predicting churn and which features are less important. It may be revealed that certain features have no effect at all, whereas other features have a much larger effect than expected. This is a secondary goal of this project.
 
