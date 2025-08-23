@@ -43,6 +43,7 @@ function skGathering_writeRanksToFile():
 		set {_chemRankWeight} to 0
 		set {_policeRankWeight} to 0
 		set {_donorRankWeight} to 0
+		set {_goldRankWeight} to 0
 
 		# Get the player's groups
 		set {_player} to offlineplayer(loop-value)
@@ -82,8 +83,12 @@ function skGathering_writeRanksToFile():
 				set {_donorRankWeight} to loop-iteration-2
 				exit loop
 
+		# Determine if player has gold rank
+		if {_playerGroups::*} contains "gold":
+			set {_goldRankWeight} to 1
+
 		# Prepare data in CSV format
-		add "%loop-value%,%{_chemRankWeight}%,%{_policeRankWeight}%,%{_donorRankWeight}%" to {_ranksOutputData::*}
+		add "%loop-value%,%{_chemRankWeight}%,%{_policeRankWeight}%,%{_donorRankWeight}%,%{_goldRankWeight}%" to {_ranksOutputData::*}
 
 	# Write all ranks data to output file
 	set {_currentTime} to unix timestamp of now
