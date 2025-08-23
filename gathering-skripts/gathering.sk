@@ -115,7 +115,7 @@ function skGathering_loadUuidsFromEssentials():
 # MAIN COMMAND #
 ################
 on tab complete of "/gatherdata":
-	set tab completions for position 1 to "balance", "plan", "mcmmo"
+	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard"
 
 command /gatherdata [<text>]:
 	# Set the permission node to use gatherdata command
@@ -135,5 +135,8 @@ command /gatherdata [<text>]:
 		else if arg 1 is "mcmmo":
 			skGathering_messagePlayer(player, "&6Generating MCMMO Data!")
 			skGathering_writeMcmmoDataToFile()
+		else if arg 1 is "leaderboard":
+			skGathering_messagePlayer(player, "&6Generating Leaderboard Data!")
+			skGathering_writeLeaderboardToFile()
 		else:
-			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', or 'mcmmo'.")
+			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', or 'leaderboard'.")
