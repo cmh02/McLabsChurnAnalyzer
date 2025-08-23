@@ -28,7 +28,7 @@ function skGathering_writeRanksToFile():
 
 	# Prepare data output list with headers
 	clear {_ranksOutputData::*}
-	add "UUID, chemrank, policerank, donorrank" to {_ranksOutputData::*}
+	add "UUID, chemrank, policerank, donorrank, goldrank" to {_ranksOutputData::*}
 
 	# Create lists of ranks and possible prestiges
 	set {_chemRanks::*} to "junky", "intern", "trainee", "assistant", "technician", "analyst", "engineer", "bioengineer", "chemist", "biochemist", "alchemist", "pharmacologist", "director"
