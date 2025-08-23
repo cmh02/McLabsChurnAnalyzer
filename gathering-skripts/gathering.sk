@@ -138,8 +138,8 @@ command /gatherdata [<text>]:
 		else if arg 1 is "leaderboard":
 			skGathering_messagePlayer(player, "&6Generating Leaderboard Data!")
 			skGathering_writeLeaderboardToFile()
-		else if arg 1 is "chemranks":
-			skGathering_messagePlayer(player, "&6Generating Chem Ranks Data!")
-			skGathering_writeChemRanksToFile()
+		else if arg 1 is "ranks":
+			skGathering_messagePlayer(player, "&6Generating Ranks Data!")
+			skGathering_writeRanksToFile()
 		else:
-			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', 'leaderboard', or 'chemranks'.")
+			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', 'leaderboard', or 'ranks'.")
