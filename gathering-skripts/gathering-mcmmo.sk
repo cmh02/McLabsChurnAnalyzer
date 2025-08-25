@@ -95,16 +95,16 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime
 		if the last java exception is set:
 			set {_player} to offlineplayer(loop-value)
 			skGathering_messageLogFile("Error Code WMDF2: A Java Exception was detected while trying to check if player exists in MCMMO Database!%nl%-> Player: %{_player}%%nl%-> UUID: %loop-value%%nl%-> Error: %the last java exception%", false, "SEVERE")
-			continue
-		if {_doesPlayerExist} is false:
+			add "%loop-value%,<none>" to {_mcmmoData::*}
+		else if {_doesPlayerExist} is false:
 			skGathering_messageLogFile("Warning Code WMDF3: Player does not exist in MCMMO Database!%nl%-> UUID: %loop-value%", false, "WARNING")
-			continue
-
-		# Get player's data with API
-		run section {_getMcmmoData} async with arguments loop-value and store result in {_result} and wait
-		
-		# Prepare data in CSV format
-		add "%loop-value%,%{_result}%" to {_mcmmoData::*}
+			add "%loop-value%,<none>" to {_mcmmoData::*}
+		else:
+			# Get player's data with API
+			run section {_getMcmmoData} async with arguments loop-value and store result in {_result} and wait
+			
+			# Prepare data in CSV format
+			add "%loop-value%,%{_result}%" to {_mcmmoData::*}
 
 	# Write all data to output file
 	skGathering_messageOutputFile("%{_outputFileName}%", "%{_outputFileTime}%", {_mcmmoData::*})
