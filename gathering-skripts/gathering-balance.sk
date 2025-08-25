@@ -19,7 +19,7 @@ on script load:
 # GATHERING FUNCTIONS #
 #######################
 
-function skGathering_writeBalancesToFile():
+function skGathering_writeBalancesToFile(outputFileName: string):
 
 	# Make sure the list of UUID's has been loaded
 	if {skgathering::uuids::*} is not set:
@@ -42,6 +42,5 @@ function skGathering_writeBalancesToFile():
 		# Prepare data in CSV format
 		add "%loop-value%,%{_balance}%" to {_balanceOutputData::*}
 
-	# Write all balance data to output file
-	set {_currentTime} to unix timestamp of now
-	skGathering_messageOutputFile("Balances_%{_currentTime}%", {_balanceOutputData::*})
+	# Write all data to output file
+	skGathering_messageOutputFile(outputFileName, {_balanceOutputData::*})

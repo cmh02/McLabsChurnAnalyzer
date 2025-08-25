@@ -19,7 +19,7 @@ on script load:
 # GATHERING FUNCTIONS #
 #######################
 
-function skGathering_writeLeaderboardToFile():
+function skGathering_writeLeaderboardToFile(outputFileName: string):
 
 	# Make sure the list of UUID's has been loaded
 	if {skgathering::uuids::*} is not set:
@@ -43,6 +43,5 @@ function skGathering_writeLeaderboardToFile():
 		# Prepare data in CSV format
 		add "%loop-value%,%{_leaderboard_position_chems_all}%,%{_leaderboard_position_chems_week}%,%{_leaderboard_position_police_all}%,%{_leaderboard_position_police_week}%" to {_leaderboardOutputData::*}
 
-	# Write all leaderboard data to output file
-	set {_currentTime} to unix timestamp of now
-	skGathering_messageOutputFile("Leaderboards_%{_currentTime}%", {_leaderboardOutputData::*})
+	# Write all data to output file
+	skGathering_messageOutputFile(outputFileName, {_leaderboardOutputData::*})

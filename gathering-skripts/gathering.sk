@@ -126,35 +126,36 @@ command /gatherdata [<text>]:
 	description: &7Allows you to generate player data and statistics.
 	# Main-Command: GatherData
 	trigger:
+		set {_now} to unix timestamp of now
 		if arg 1 is "balance":
 			skGathering_messagePlayer(player, "&6Generating Balance Data!")
-			skGathering_writeBalancesToFile()
+			skGathering_writeBalancesToFile(outputFileName="Balances_%{_now}%.csv")
 		else if arg 1 is "plan":
 			skGathering_messagePlayer(player, "&6Generating Plan Data!")
-			skGathering_writePlanDataToFile()
+			skGathering_writePlanDataToFile(outputFileName="PlanData_%{_now}%.csv")
 		else if arg 1 is "mcmmo":
 			skGathering_messagePlayer(player, "&6Generating MCMMO Data!")
-			skGathering_writeMcmmoDataToFile()
+			skGathering_writeMcmmoDataToFile(outputFileName="McmmoData_%{_now}%.csv")
 		else if arg 1 is "leaderboard":
 			skGathering_messagePlayer(player, "&6Generating Leaderboard Data!")
-			skGathering_writeLeaderboardToFile()
+			skGathering_writeLeaderboardToFile(outputFileName="Leaderboard_%{_now}%.csv")
 		else if arg 1 is "ranks":
 			skGathering_messagePlayer(player, "&6Generating Ranks Data!")
-			skGathering_writeRanksToFile()
+			skGathering_writeRanksToFile(outputFileName="Ranks_%{_now}%.csv")
 		else if arg 1 is "votes":
 			skGathering_messagePlayer(player, "&6Generating Votes Data!")
-			skGathering_writeVotesToFile()
+			skGathering_writeVotesToFile(outputFileName="Votes_%{_now}%.csv")
 		else if arg 1 is "labwars":
 			skGathering_messagePlayer(player, "&6Generating LabWars Data!")
-			skGathering_writeLabWarsToFile()
+			skGathering_writeLabWarsToFile(outputFileName="LabWars_%{_now}%.csv")
 		else if arg 1 is "all":
 			skGathering_messagePlayer(player, "&6Generating All Data!")
-			skGathering_writeBalancesToFile()
-			skGathering_writePlanDataToFile()
-			skGathering_writeMcmmoDataToFile()
-			skGathering_writeLeaderboardToFile()
-			skGathering_writeRanksToFile()
-			skGathering_writeVotesToFile()
-			skGathering_writeLabWarsToFile()
+			skGathering_writeBalancesToFile(outputFileName="Balances_%{_now}%.csv")
+			skGathering_writePlanDataToFile(outputFileName="PlanData_%{_now}%.csv")
+			skGathering_writeMcmmoDataToFile(outputFileName="McmmoData_%{_now}%.csv")
+			skGathering_writeLeaderboardToFile(outputFileName="Leaderboard_%{_now}%.csv")
+			skGathering_writeRanksToFile(outputFileName="Ranks_%{_now}%.csv")
+			skGathering_writeVotesToFile(outputFileName="Votes_%{_now}%.csv")
+			skGathering_writeLabWarsToFile(outputFileName="LabWars_%{_now}%.csv")
 		else:
 			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', 'leaderboard', 'ranks', 'votes', 'labwars', or 'all'.")

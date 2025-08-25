@@ -19,7 +19,7 @@ on script load:
 # GATHERING FUNCTIONS #
 #######################
 
-function skGathering_writeRanksToFile():
+function skGathering_writeRanksToFile(outputFileName: string):
 
 	# Make sure the list of UUID's has been loaded
 	if {skgathering::uuids::*} is not set:
@@ -91,5 +91,4 @@ function skGathering_writeRanksToFile():
 		add "%loop-value%,%{_chemRankWeight}%,%{_policeRankWeight}%,%{_donorRankWeight}%,%{_goldRankWeight}%" to {_ranksOutputData::*}
 
 	# Write all ranks data to output file
-	set {_currentTime} to unix timestamp of now
-	skGathering_messageOutputFile("Ranks_%{_currentTime}%", {_ranksOutputData::*})
+	skGathering_messageOutputFile(outputFileName, {_ranksOutputData::*})

@@ -22,7 +22,7 @@ on script load:
 # GATHERING FUNCTIONS #
 #######################
 
-function skGathering_writeLabWarsToFile():
+function skGathering_writeLabWarsToFile(outputFileName: string):
 
 	# Make sure the list of UUID's has been loaded
 	if {skgathering::uuids::*} is not set:
@@ -50,6 +50,5 @@ function skGathering_writeLabWarsToFile():
 		# Prepare data in CSV format
 		add "%loop-value%,%{_revTotal}%,%{_revPhase}%" to {_labWarsOutputData::*}
 
-	# Write all LabWars data to output file
-	set {_currentTime} to unix timestamp of now
-	skGathering_messageOutputFile("LabWars_%{_currentTime}%", {_labWarsOutputData::*})
+	# Write all data to output file
+	skGathering_messageOutputFile(outputFileName, {_labWarsOutputData::*})

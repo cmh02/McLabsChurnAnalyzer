@@ -19,7 +19,7 @@ on script load:
 # GATHERING FUNCTIONS #
 #######################
 
-function skGathering_writeVotesToFile():
+function skGathering_writeVotesToFile(outputFileName: string):
 
 	# Make sure the list of UUID's has been loaded
 	if {skgathering::uuids::*} is not set:
@@ -44,5 +44,4 @@ function skGathering_writeVotesToFile():
 		add "%loop-value%,%{_votes}%" to {_votesOutputData::*}
 
 	# Write all votes data to output file
-	set {_currentTime} to unix timestamp of now
-	skGathering_messageOutputFile("Votes_%{_currentTime}%", {_votesOutputData::*})
+	skGathering_messageOutputFile(outputFileName, {_votesOutputData::*})

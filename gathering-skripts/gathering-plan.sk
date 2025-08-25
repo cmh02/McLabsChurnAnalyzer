@@ -21,7 +21,7 @@ on script load:
 # GATHERING FUNCTIONS #
 #######################
 
-function skGathering_writePlanDataToFile():
+function skGathering_writePlanDataToFile(outputFileName: string):
 
 	# Make sure the list of UUID's has been loaded
 	if {skgathering::uuids::*} is not set:
@@ -69,5 +69,4 @@ function skGathering_writePlanDataToFile():
 		add "%loop-value%,%{_result}%" to {_planDataOutputData::*}
 
 	# Write all data to output file
-	set {_currentTime} to unix timestamp of now
-	skGathering_messageOutputFile("PlanData_%{_currentTime}%", {_planDataOutputData::*})
+	skGathering_messageOutputFile(outputFileName, {_planDataOutputData::*})
