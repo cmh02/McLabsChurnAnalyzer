@@ -69,4 +69,4 @@ function skGathering_writePlanDataToFile(outputFileName: string):
 		add "%loop-value%,%{_result}%" to {_planDataOutputData::*}
 
 	# Write all data to output file
-	skGathering_messageOutputFile(outputFileName, {_planDataOutputData::*})
+	skGathering_messageOutputFile("%{outputFileName}%", {_planDataOutputData::*})

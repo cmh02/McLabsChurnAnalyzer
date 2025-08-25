@@ -44,4 +44,4 @@ function skGathering_writeLeaderboardToFile(outputFileName: string):
 		add "%loop-value%,%{_leaderboard_position_chems_all}%,%{_leaderboard_position_chems_week}%,%{_leaderboard_position_police_all}%,%{_leaderboard_position_police_week}%" to {_leaderboardOutputData::*}
 
 	# Write all data to output file
-	skGathering_messageOutputFile(outputFileName, {_leaderboardOutputData::*})
+	skGathering_messageOutputFile("%{outputFileName}%", {_leaderboardOutputData::*})

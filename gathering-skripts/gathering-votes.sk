@@ -44,4 +44,4 @@ function skGathering_writeVotesToFile(outputFileName: string):
 		add "%loop-value%,%{_votes}%" to {_votesOutputData::*}
 
 	# Write all votes data to output file
-	skGathering_messageOutputFile(outputFileName, {_votesOutputData::*})
+	skGathering_messageOutputFile("%{outputFileName}%", {_votesOutputData::*})

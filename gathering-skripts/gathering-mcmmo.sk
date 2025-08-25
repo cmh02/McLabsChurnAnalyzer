@@ -107,4 +107,4 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string):
 		add "%loop-value%,%{_result}%" to {_mcmmoData::*}
 
 	# Write all data to output file
-	skGathering_messageOutputFile(outputFileName, {_mcmmoData::*})
+	skGathering_messageOutputFile("%{outputFileName}%", {_mcmmoData::*})

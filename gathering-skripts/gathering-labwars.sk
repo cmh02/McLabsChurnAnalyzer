@@ -51,4 +51,4 @@ function skGathering_writeLabWarsToFile(outputFileName: string):
 		add "%loop-value%,%{_revTotal}%,%{_revPhase}%" to {_labWarsOutputData::*}
 
 	# Write all data to output file
-	skGathering_messageOutputFile(outputFileName, {_labWarsOutputData::*})
+	skGathering_messageOutputFile("%{outputFileName}%", {_labWarsOutputData::*})

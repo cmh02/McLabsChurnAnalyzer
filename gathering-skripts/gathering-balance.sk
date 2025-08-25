@@ -43,4 +43,4 @@ function skGathering_writeBalancesToFile(outputFileName: string):
 		add "%loop-value%,%{_balance}%" to {_balanceOutputData::*}
 
 	# Write all data to output file
-	skGathering_messageOutputFile(outputFileName, {_balanceOutputData::*})
+	skGathering_messageOutputFile("%{outputFileName}%", {_balanceOutputData::*})
