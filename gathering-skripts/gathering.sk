@@ -51,9 +51,9 @@ function skGathering_messageDiscord(message: strings="Error in Discord Message -
 function skGathering_messageLogFile(message: strings="Error in Log File Message - No Input Given!", addNewline: boolean=false, severity: string="NORMAL"):
 	messageLogFile("GsK", {_message::*}, "gathering.log", {_addNewline}, {_severity})
 
-function skGathering_messageOutputFile(type: string="GeneralOutput", message: strings="Error in Output File Message - No Input Given!"):
+function skGathering_messageOutputFile(type: string="GeneralOutput", timeDirectory: string="%unix timestamp of now%", message: strings="Error in Output File Message - No Input Given!"):
 	# Create directory and file paths
-	set {_directoryPath} to "plugins/Skript/gatheringoutput/"
+	set {_directoryPath} to "plugins/Skript/gatheringoutput/%{_timeDirectory}%/"
 	set {_filePath} to "%{_type}%.csv"
 
 	# Check if the directory exists, and if not, create it
@@ -129,33 +129,33 @@ command /gatherdata [<text>]:
 		set {_now} to unix timestamp of now
 		if arg 1 is "balance":
 			skGathering_messagePlayer(player, "&6Generating Balance Data!")
-			skGathering_writeBalancesToFile("Balances_%{_now}%")
+			skGathering_writeBalancesToFile("Balances", "%{_now}%")
 		else if arg 1 is "plan":
 			skGathering_messagePlayer(player, "&6Generating Plan Data!")
-			skGathering_writePlanDataToFile("PlanData_%{_now}%")
+			skGathering_writePlanDataToFile("PlanData", "%{_now}%")
 		else if arg 1 is "mcmmo":
 			skGathering_messagePlayer(player, "&6Generating MCMMO Data!")
-			skGathering_writeMcmmoDataToFile("McmmoData_%{_now}%")
+			skGathering_writeMcmmoDataToFile("McmmoData", "%{_now}%")
 		else if arg 1 is "leaderboard":
 			skGathering_messagePlayer(player, "&6Generating Leaderboard Data!")
-			skGathering_writeLeaderboardToFile("Leaderboard_%{_now}%")
+			skGathering_writeLeaderboardToFile("Leaderboard", "%{_now}%")
 		else if arg 1 is "ranks":
 			skGathering_messagePlayer(player, "&6Generating Ranks Data!")
-			skGathering_writeRanksToFile("Ranks_%{_now}%")
+			skGathering_writeRanksToFile("Ranks", "%{_now}%")
 		else if arg 1 is "votes":
 			skGathering_messagePlayer(player, "&6Generating Votes Data!")
-			skGathering_writeVotesToFile("Votes_%{_now}%")
+			skGathering_writeVotesToFile("Votes", "%{_now}%")
 		else if arg 1 is "labwars":
 			skGathering_messagePlayer(player, "&6Generating LabWars Data!")
-			skGathering_writeLabWarsToFile("LabWars_%{_now}%")
+			skGathering_writeLabWarsToFile("LabWars", "%{_now}%")
 		else if arg 1 is "all":
 			skGathering_messagePlayer(player, "&6Generating All Data!")
-			skGathering_writeBalancesToFile("Balances_%{_now}%")
-			skGathering_writePlanDataToFile("PlanData_%{_now}%")
-			skGathering_writeMcmmoDataToFile("McmmoData_%{_now}%")
-			skGathering_writeLeaderboardToFile("Leaderboard_%{_now}%")
-			skGathering_writeRanksToFile("Ranks_%{_now}%")
-			skGathering_writeVotesToFile("Votes_%{_now}%")
-			skGathering_writeLabWarsToFile("LabWars_%{_now}%")
+			skGathering_writeBalancesToFile("Balances", "%{_now}%")
+			skGathering_writePlanDataToFile("PlanData", "%{_now}%")
+			skGathering_writeMcmmoDataToFile("McmmoData", "%{_now}%")
+			skGathering_writeLeaderboardToFile("Leaderboard", "%{_now}%")
+			skGathering_writeRanksToFile("Ranks", "%{_now}%")
+			skGathering_writeVotesToFile("Votes", "%{_now}%")
+			skGathering_writeLabWarsToFile("LabWars", "%{_now}%")
 		else:
 			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', 'leaderboard', 'ranks', 'votes', 'labwars', or 'all'.")

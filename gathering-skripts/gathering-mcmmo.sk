@@ -26,7 +26,7 @@ import:
 # GATHERING FUNCTIONS #
 #######################
 
-function skGathering_writeMcmmoDataToFile(outputFileName: string):
+function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime: string):
 
 	# Make sure the list of UUID's has been loaded
 	if {skgathering::uuids::*} is not set:
@@ -107,4 +107,4 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string):
 		add "%loop-value%,%{_result}%" to {_mcmmoData::*}
 
 	# Write all data to output file
-	skGathering_messageOutputFile("%{outputFileName}%", {_mcmmoData::*})
+	skGathering_messageOutputFile("%{_outputFileName}%", "%{_outputFileTime}%", {_mcmmoData::*})
