@@ -39,6 +39,11 @@ function skGathering_writeRanksToFile(outputFileName: string, outputFileTime: st
 	# Loop over UUID's to get leaderboard positions
 	loop {skgathering::uuids::*}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting ranks gathering operation.", false, "WARNING")
+			stop
+
 		# Create placeholder variables
 		set {_chemRankWeight} to 0
 		set {_policeRankWeight} to 0

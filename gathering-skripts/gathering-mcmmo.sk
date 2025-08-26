@@ -90,6 +90,11 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime
 	# Loop over UUID's to get mcmmo info
 	loop {skgathering::uuids::*}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting MCMMO gathering operation.", false, "WARNING")
+			stop
+
 		# Check if the player exists in the MCMMO Database
 		set {_doesPlayerExist} to try {_mcmmoDatabaseApi}.doesPlayerExistInDB(loop-value)
 		if the last java exception is set:

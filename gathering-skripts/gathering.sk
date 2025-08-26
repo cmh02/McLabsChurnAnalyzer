@@ -21,6 +21,9 @@ on script load:
 	set {_numUuids} to amount of {skgathering::uuids::*}
 	skGathering_messageLogFile("-> Loaded %{_numUuids}% player UUID's from EssentialsX!")
 
+	# Set estop to false
+	set {skgathering::estop} to false
+
 
 # Skript Reflect Imports
 import:
@@ -115,7 +118,7 @@ function skGathering_loadUuidsFromEssentials():
 # MAIN COMMAND #
 ################
 on tab complete of "/gatherdata":
-	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard", "ranks", "votes", "labwars", "all"
+	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard", "ranks", "votes", "labwars", "all", "estop"
 
 command /gatherdata [<text>]:
 	# Set the permission node to use gatherdata command
@@ -157,5 +160,7 @@ command /gatherdata [<text>]:
 			skGathering_writeRanksToFile("Ranks", "%{_now}%")
 			skGathering_writeVotesToFile("Votes", "%{_now}%")
 			skGathering_writeLabWarsToFile("LabWars", "%{_now}%")
+		else if arg 1 is "estop":
+			set {skgathering::estop} to true
 		else:
 			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', 'leaderboard', 'ranks', 'votes', 'labwars', or 'all'.")

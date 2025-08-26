@@ -33,6 +33,11 @@ function skGathering_writeBalancesToFile(outputFileName: string, outputFileTime:
 	# Loop over UUID's to get balances
 	loop {skgathering::uuids::*}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting balance gathering operation.", false, "WARNING")
+			stop
+
 		# Get the player's balance
 		set {_player} to offlineplayer(loop-value)
 		set {_balance} to "%{_player}'s balance%"

@@ -33,6 +33,11 @@ function skGathering_writeVotesToFile(outputFileName: string, outputFileTime: st
 	# Loop over UUID's to get votes
 	loop {skgathering::uuids::*}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting votes gathering operation.", false, "WARNING")
+			stop
+
 		# Get the player's votes for this voting event (month-year)
 		set {_player} to offlineplayer(loop-value)
 		set {_monthYearFormatted} to lowercase (now formatted as "MMMMyy")

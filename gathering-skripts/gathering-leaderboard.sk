@@ -33,6 +33,11 @@ function skGathering_writeLeaderboardToFile(outputFileName: string, outputFileTi
 	# Loop over UUID's to get leaderboard positions
 	loop {skgathering::uuids::*}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting leaderboard gathering operation.", false, "WARNING")
+			stop
+
 		# Get the player's leaderboard positions
 		set {_player} to offlineplayer(loop-value)
 		set {_leaderboard_position_chems_all} to leaderboard_place({_player}, "chems", "alltime")

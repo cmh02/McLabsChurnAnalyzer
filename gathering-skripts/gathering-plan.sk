@@ -56,6 +56,11 @@ function skGathering_writePlanDataToFile(outputFileName: string, outputFileTime:
 	# Loop over UUID's to get plan player analytics
 	loop {skgathering::uuids::*}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting Plan Player Analytics gathering operation.", false, "WARNING")
+			stop
+
 		# Make first request for all the placeholders so that Plan caches the data
 		run section {_getPlaceholdersForUuid} async with arguments loop-value and store result in {_result} and wait
 		

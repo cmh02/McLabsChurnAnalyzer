@@ -36,6 +36,11 @@ function skGathering_writeLabWarsToFile(outputFileName: string, outputFileTime: 
 	# Loop over UUID's to get votes
 	loop {skgathering::uuids::*}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting LabWars gathering operation.", false, "WARNING")
+			stop
+
 		# Get the player's documents from Mongo database
 		set {_player} to offlineplayer(loop-value)
 		set {_labWarsMongoDocument} to first mongo document with mongosk filter where field "_id" is "%loop-value%" of collection {mongosk::collection::labwars}
