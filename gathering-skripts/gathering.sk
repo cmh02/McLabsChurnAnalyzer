@@ -119,6 +119,7 @@ function skGathering_loadUuidsFromEssentials():
 ################
 on tab complete of "/gatherdata":
 	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard", "ranks", "votes", "labwars", "all", "estop"
+	set tab completions for position 2 to "<identifier>"
 
 command /gatherdata [<text>] [<text>]:
 	# Set the permission node to use gatherdata command
