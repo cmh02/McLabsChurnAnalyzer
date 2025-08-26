@@ -120,7 +120,7 @@ function skGathering_loadUuidsFromEssentials():
 on tab complete of "/gatherdata":
 	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard", "ranks", "votes", "labwars", "all", "estop"
 
-command /gatherdata [<text>]:
+command /gatherdata [<text>] [<text>]:
 	# Set the permission node to use gatherdata command
 	permission: skript.admin
 	# Set the permission error message for the gatherdata command
@@ -129,37 +129,43 @@ command /gatherdata [<text>]:
 	description: &7Allows you to generate player data and statistics.
 	# Main-Command: GatherData
 	trigger:
-		set {_now} to unix timestamp of now
+		# Determine identifier (either unix of now, or user-provided)
+		if arg 2 is not set:
+			set {_identifier} to unix timestamp of now
+		else:
+			set {_identifier} to arg 2
+
+		# Determine data to gather
 		if arg 1 is "balance":
 			skGathering_messagePlayer(player, "&6Generating Balance Data!")
-			skGathering_writeBalancesToFile("Balances", "%{_now}%")
+			skGathering_writeBalancesToFile("Balances", "%{_identifier}%")
 		else if arg 1 is "plan":
 			skGathering_messagePlayer(player, "&6Generating Plan Data!")
-			skGathering_writePlanDataToFile("PlanData", "%{_now}%")
+			skGathering_writePlanDataToFile("PlanData", "%{_identifier}%")
 		else if arg 1 is "mcmmo":
 			skGathering_messagePlayer(player, "&6Generating MCMMO Data!")
-			skGathering_writeMcmmoDataToFile("McmmoData", "%{_now}%")
+			skGathering_writeMcmmoDataToFile("McmmoData", "%{_identifier}%")
 		else if arg 1 is "leaderboard":
 			skGathering_messagePlayer(player, "&6Generating Leaderboard Data!")
-			skGathering_writeLeaderboardToFile("Leaderboard", "%{_now}%")
+			skGathering_writeLeaderboardToFile("Leaderboard", "%{_identifier}%")
 		else if arg 1 is "ranks":
 			skGathering_messagePlayer(player, "&6Generating Ranks Data!")
-			skGathering_writeRanksToFile("Ranks", "%{_now}%")
+			skGathering_writeRanksToFile("Ranks", "%{_identifier}%")
 		else if arg 1 is "votes":
 			skGathering_messagePlayer(player, "&6Generating Votes Data!")
-			skGathering_writeVotesToFile("Votes", "%{_now}%")
+			skGathering_writeVotesToFile("Votes", "%{_identifier}%")
 		else if arg 1 is "labwars":
 			skGathering_messagePlayer(player, "&6Generating LabWars Data!")
-			skGathering_writeLabWarsToFile("LabWars", "%{_now}%")
+			skGathering_writeLabWarsToFile("LabWars", "%{_identifier}%")
 		else if arg 1 is "all":
 			skGathering_messagePlayer(player, "&6Generating All Data!")
-			skGathering_writeBalancesToFile("Balances", "%{_now}%")
-			skGathering_writePlanDataToFile("PlanData", "%{_now}%")
-			skGathering_writeMcmmoDataToFile("McmmoData", "%{_now}%")
-			skGathering_writeLeaderboardToFile("Leaderboard", "%{_now}%")
-			skGathering_writeRanksToFile("Ranks", "%{_now}%")
-			skGathering_writeVotesToFile("Votes", "%{_now}%")
-			skGathering_writeLabWarsToFile("LabWars", "%{_now}%")
+			skGathering_writeBalancesToFile("Balances", "%{_identifier}%")
+			skGathering_writePlanDataToFile("PlanData", "%{_identifier}%")
+			skGathering_writeMcmmoDataToFile("McmmoData", "%{_identifier}%")
+			skGathering_writeLeaderboardToFile("Leaderboard", "%{_identifier}%")
+			skGathering_writeRanksToFile("Ranks", "%{_identifier}%")
+			skGathering_writeVotesToFile("Votes", "%{_identifier}%")
+			skGathering_writeLabWarsToFile("LabWars", "%{_identifier}%")
 		else if arg 1 is "estop":
 			set {skgathering::estop} to true
 		else:
