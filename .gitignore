@@ -138,9 +138,7 @@ celerybeat.pid
 .env
 .envrc
 .venv
-env/
 venv/
-ENV/
 env.bak/
 venv.bak/
 
@@ -203,4 +201,11 @@ __marimo__/
 .streamlit/secrets.toml
 
 # Raw Data Collection
-data/gatheringoutput/*.csv
+data/gatheringoutput/*/*.csv
+
+# Private data saves
+data/anonoutput/private/*/*.csv
+
+# DS Store
+data/.DS_Store
+.DS_Store
