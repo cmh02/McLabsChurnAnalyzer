@@ -205,6 +205,7 @@ data/gatheringoutput/*/*.csv
 
 # Private data saves
 data/anonoutput/private/*/*.csv
+data/combined/private/*/*.csv
 
 # DS Store
 data/.DS_Store
