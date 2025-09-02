@@ -83,6 +83,4 @@ Once the data has been gathered from the various sources into Skript (via some m
 
 For this project, our target variable is **player churn**, indicating whether or not a player will leave the server or continue playing.
 
-To identify whether or not a player has left the server, we analyze the player's last seen timestamp. We consider a player to be churned, or to have left, once they have been offline for 14 days. Since we want our model to also be able to make predictions based on the player's current time since last active, we cannot simply train the model to learn that more than 14 days is churn. Instead, we want the model to learn the patterns of a player prior to leaving the server, when they have been online within the past 14 days.
-
-In order to obtain proper data for training, we will collect initial training samples at two different times, three days apart. We will then identify which players in the first dataset were active within the past 14 days and in the second dataset were not active within the past 14 days. This will allow us to properly train the model on the first dataset and find which players have churned versus which players have been offline more than 14 days.
+To identify whether or not a player has left the server, we analyze the player's last seen timestamp. We consider a player to be churned, or to have left, once they have been offline for 14 days. Currently, we do not train our models on any data identifying the time since last login for a player, but future versions may have derived features based on this.
