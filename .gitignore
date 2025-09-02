@@ -207,6 +207,7 @@ data/gatheringoutput/*/*.csv
 data/anonoutput/private/*/*.csv
 data/combined/private/*/*.csv
 data/cleaned/private/*/*.csv
+data/targetted/private/*/*.csv
 
 # DS Store
 data/.DS_Store
