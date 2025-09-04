@@ -38,7 +38,11 @@ function skGathering_writeBalancesToFile(outputFileName: string, outputFileTime:
 		set {_balance} to "%{_player}'s balance%"
 		replace every "," with "" in {_balance}
 		replace every "$" with "" in {_balance}
-		
+		replace every "Dollar" with "" in {_balance}
+		replace every "dollar" with "" in {_balance}
+		replace every "Dollars" with "" in {_balance}
+		replace every "dollars" with "" in {_balance}
+
 		# Return data
 		return "%{_balance}%"
 
