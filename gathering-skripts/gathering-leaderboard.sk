@@ -30,6 +30,20 @@ function skGathering_writeLeaderboardToFile(outputFileName: string, outputFileTi
 	clear {_leaderboardOutputData::*}
 	add "UUID, leaderboard_position_chems_all, leaderboard_position_chems_week, leaderboard_position_police_all, leaderboard_position_police_week" to {_leaderboardOutputData::*}
 
+	# Make section for querying data in async
+	create new section with {_uuid} stored in {_getLeaderboardDataForUuid}:
+
+		# Get the player's leaderboard positions
+		set {_player} to offlineplayer({_uuid})
+		set {_leaderboard_position_chems_all} to leaderboard_place({_player}, "chems", "alltime")
+		set {_leaderboard_position_chems_week} to leaderboard_place({_player}, "chems", "week")
+		set {_leaderboard_position_police_all} to leaderboard_place({_player}, "police", "alltime")
+		set {_leaderboard_position_police_week} to leaderboard_place({_player}, "police", "week")
+
+		# Return data
+		return "%{_leaderboard_position_chems_all}%,%{_leaderboard_position_chems_week}%,%{_leaderboard_position_police_all}%,%{_leaderboard_position_police_week}%"
+
+
 	# Loop over UUID's to get leaderboard positions
 	loop {skgathering::uuids::*}:
 
@@ -38,15 +52,11 @@ function skGathering_writeLeaderboardToFile(outputFileName: string, outputFileTi
 			skGathering_messageLogFile("E-Stop activated! Aborting leaderboard gathering operation.", false, "WARNING")
 			stop
 
-		# Get the player's leaderboard positions
-		set {_player} to offlineplayer(loop-value)
-		set {_leaderboard_position_chems_all} to leaderboard_place({_player}, "chems", "alltime")
-		set {_leaderboard_position_chems_week} to leaderboard_place({_player}, "chems", "week")
-		set {_leaderboard_position_police_all} to leaderboard_place({_player}, "police", "alltime")
-		set {_leaderboard_position_police_week} to leaderboard_place({_player}, "police", "week")
+		# Get the player's leaderboard data
+		run section {_getLeaderboardDataForUuid} async with arguments loop-value and store result in {_result} and wait
 
 		# Prepare data in CSV format
-		add "%loop-value%,%{_leaderboard_position_chems_all}%,%{_leaderboard_position_chems_week}%,%{_leaderboard_position_police_all}%,%{_leaderboard_position_police_week}%" to {_leaderboardOutputData::*}
+		add "%loop-value%,%{_result}%" to {_leaderboardOutputData::*}
 
 	# Write all data to output file
 	skGathering_messageOutputFile("%{_outputFileName}%", "%{_outputFileTime}%", {_leaderboardOutputData::*})
