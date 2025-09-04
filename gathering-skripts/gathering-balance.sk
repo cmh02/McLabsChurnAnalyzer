@@ -30,6 +30,18 @@ function skGathering_writeBalancesToFile(outputFileName: string, outputFileTime:
 	clear {_balanceOutputData::*}
 	add "UUID, balance" to {_balanceOutputData::*}
 
+	# Make section for querying placeholders in async
+	create new section with {_uuid} stored in {_getBalanceForUuid}:
+
+		# Get the player's balance
+		set {_player} to offlineplayer(loop-value)
+		set {_balance} to "%{_player}'s balance%"
+		replace every "," with "" in {_balance}
+		replace every "$" with "" in {_balance}
+		
+		# Return data
+		return "%{_balance}%"
+
 	# Loop over UUID's to get balances
 	loop {skgathering::uuids::*}:
 
@@ -39,13 +51,10 @@ function skGathering_writeBalancesToFile(outputFileName: string, outputFileTime:
 			stop
 
 		# Get the player's balance
-		set {_player} to offlineplayer(loop-value)
-		set {_balance} to "%{_player}'s balance%"
-		replace every "," with "" in {_balance}
-		replace every "$" with "" in {_balance}
+		run section {_getBalanceForUuid} async with arguments loop-value and store result in {_result} and wait
 
 		# Prepare data in CSV format
-		add "%loop-value%,%{_balance}%" to {_balanceOutputData::*}
+		add "%loop-value%,%{_result}%" to {_balanceOutputData::*}
 
 	# Write all data to output file
 	skGathering_messageOutputFile("%{_outputFileName}%", "%{_outputFileTime}%", {_balanceOutputData::*})
