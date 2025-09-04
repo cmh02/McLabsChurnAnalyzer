@@ -33,17 +33,12 @@ function skGathering_writeLabWarsToFile(outputFileName: string, outputFileTime: 
 	clear {_labWarsOutputData::*}
 	add "UUID, lw_rev_total, lw_rev_phase" to {_labWarsOutputData::*}
 
-	# Loop over UUID's to get votes
-	loop {skgathering::uuids::*}:
-
-		# Check if estop is activated
-		if {skgathering::estop} is true:
-			skGathering_messageLogFile("E-Stop activated! Aborting LabWars gathering operation.", false, "WARNING")
-			stop
+	# Make section for querying data in async
+	create new section with {_uuid} stored in {_getLabWarsDataForUuid}:
 
 		# Get the player's documents from Mongo database
-		set {_player} to offlineplayer(loop-value)
-		set {_labWarsMongoDocument} to first mongo document with mongosk filter where field "_id" is "%loop-value%" of collection {mongosk::collection::labwars}
+		set {_player} to offlineplayer({_uuid})
+		set {_labWarsMongoDocument} to first mongo document with mongosk filter where field "_id" is "%{_uuid}%" of collection {mongosk::collection::labwars}
 		set {_revenueMongoDocument} to mongo value "revenue" of {_labWarsMongoDocument}
 		set {_revTotalMongoDocument} to mongo value "total" of {_revenueMongoDocument}
 		set {_revPhaseMongoDocument} to mongo value "week" of {_revenueMongoDocument}
@@ -53,7 +48,22 @@ function skGathering_writeLabWarsToFile(outputFileName: string, outputFileTime: 
 		set {_revPhase} to mongo value "all" of {_revPhaseMongoDocument}
 
 		# Prepare data in CSV format
-		add "%loop-value%,%{_revTotal}%,%{_revPhase}%" to {_labWarsOutputData::*}
+		return "%{_revTotal}%,%{_revPhase}%"
+
+	# Loop over UUID's to get votes
+	loop {skgathering::uuids::*}:
+
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting LabWars gathering operation.", false, "WARNING")
+			stop
+
+		# Get the player's labwars data
+		run section {_getLabWarsDataForUuid} async with arguments loop-value and store result in {_result} and wait
+
+
+		# Prepare data in CSV format
+		add "%loop-value%,%{_result}%" to {_labWarsOutputData::*}
 
 	# Write all data to output file
 	skGathering_messageOutputFile("%{_outputFileName}%", "%{_outputFileTime}%", {_labWarsOutputData::*})
