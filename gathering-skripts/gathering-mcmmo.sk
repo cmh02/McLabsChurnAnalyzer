@@ -22,6 +22,15 @@ on script load:
 	# Log the script load in console
 	skGathering_messageLogFile("The Gathering McMMO Skript has been loaded on server %{server}%!")
 
+	# Get all skills from the API as a skript list
+	set {_skills} to try SkillAPI.getSkills()
+	set {skgathering::mcmmoskillnames::*} to ...{_skills}
+	skGathering_messageLogFile("Loaded MCMMO Skill Names: %{skgathering::mcmmoskillnames::*}%")
+	if the last java exception is set:
+		set {_player} to offlineplayer({_uuid})
+		skGathering_messageLogFile("Error Code GM-OSL: A Java Exception was detected while trying to obtain MCMMO Skill Names!%nl%-> Error: %the last java exception%", false, "SEVERE")
+		stop
+
 	# Make section for interacting with API in async
 	create new section with {_uuid} stored in {skgathering::asyncs::getMcmmoData}:
 
@@ -37,7 +46,7 @@ on script load:
 		add "%{_powerLevel}%" to {_mcmmoDataPlayer::*}
 
 		# Loop Skills
-		loop {gather::mcmmoskillnames::*}:
+		loop {skgathering::mcmmoskillnames::*}:
 			# Add skill level to output
 			set {_skillLevel} to try ExperienceAPI.getLevelOffline({_uuid}, loop-value)
 			if the last java exception is set:
@@ -68,17 +77,8 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime
 	add "UUID" to {_mcmmoDataHeaders::*}
 	add "mcmmo_power_level" to {_mcmmoDataHeaders::*}
 
-	# Get all skills from the API as a skript list
-	set {_skills} to try SkillAPI.getSkills()
-	set {gather::mcmmoskillnames::*} to ...{_skills}
-	skGathering_messageLogFile("Loaded MCMMO Skill Names: %{gather::mcmmoskillnames::*}%")
-	if the last java exception is set:
-		set {_player} to offlineplayer({_uuid})
-		skGathering_messageLogFile("Error Code WMDF1: A Java Exception was detected while trying to obtain MCMMO Skill Names!%nl%-> Player: %{_player}%%nl%-> UUID: %{_uuid}%%nl%-> Error: %the last java exception%", false, "SEVERE")
-		stop
-
 	# Add skill headers to output
-	loop {gather::mcmmoskillnames::*}:
+	loop {skgathering::mcmmoskillnames::*}:
 		add "mcmmo_skill_%loop-value%" to {_mcmmoDataHeaders::*}
 
 	# Add headers to output
