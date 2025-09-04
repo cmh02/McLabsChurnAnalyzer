@@ -11,30 +11,19 @@ McMMO API: https://github.com/mcMMO-Dev/mcMMO/tree/master/src/main/java/com/gmai
 options:
 	labsprefix: <##00cdf6>&lMC<##00cdf6>&lL<##00b8e8>&la<##00a2da>&lb<##008dcc>&ls &f»
 
-# Load-Up Events
-on script load:
-	# Log the script load in console
-	skGathering_messageLogFile("The Gathering McMMO Skript has been loaded on server %{server}%!")
-
 # Skript Reflect Imports
 import:
 	com.gmail.nossr50.api.DatabaseAPI
 	com.gmail.nossr50.api.ExperienceAPI
 	com.gmail.nossr50.api.SkillAPI
 
-#######################
-# GATHERING FUNCTIONS #
-#######################
-
-function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime: string):
-
-	# Make sure the list of UUID's has been loaded
-	if {skgathering::uuids::*} is not set:
-		skGathering_messageLogFile("A call was made to get all player MCMMO data, but UUID's have not been loaded yet!", false, "SEVERE")
-		stop
+# Load-Up Events
+on script load:
+	# Log the script load in console
+	skGathering_messageLogFile("The Gathering McMMO Skript has been loaded on server %{server}%!")
 
 	# Make section for interacting with API in async
-	create new section with {_uuid} stored in {_getMcmmoData}:
+	create new section with {_uuid} stored in {skgathering::asyncs::getMcmmoData}:
 
 		# Create list for storing individual player data
 		clear {_mcmmoDataPlayer::*}
@@ -59,6 +48,17 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime
 
 		# Return in single comma-delimited string
 		return join {_mcmmoDataPlayer::*} with ", "
+
+#######################
+# GATHERING FUNCTIONS #
+#######################
+
+function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime: string):
+
+	# Make sure the list of UUID's has been loaded
+	if {skgathering::uuids::*} is not set:
+		skGathering_messageLogFile("A call was made to get all player MCMMO data, but UUID's have not been loaded yet!", false, "SEVERE")
+		stop
 
 	# Prepare lists for header collection and data output
 	clear {_mcmmoData::*}
@@ -106,7 +106,7 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime
 			add "%loop-value%,<none>" to {_mcmmoData::*}
 		else:
 			# Get player's data with API
-			run section {_getMcmmoData} async with arguments loop-value and store result in {_result} and wait
+			run section {skgathering::asyncs::getMcmmoData} async with arguments loop-value and store result in {_result} and wait
 			
 			# Prepare data in CSV format
 			add "%loop-value%,%{_result}%" to {_mcmmoData::*}

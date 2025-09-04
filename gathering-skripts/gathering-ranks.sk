@@ -15,6 +15,66 @@ on script load:
 	# Log the script load in console
 	skGathering_messageLogFile("The Gathering Ranks Skript has been loaded on server %{server}%!")
 
+	# Create lists of ranks and possible prestiges
+	set {skgathering::rankinfo::chemranks::*} to "junky", "intern", "trainee", "assistant", "technician", "analyst", "engineer", "bioengineer", "chemist", "biochemist", "alchemist", "pharmacologist", "director"
+	set {skgathering::rankinfo::policeRanks::*} to "informant", "recruit", "cadet", "officer", "detective", "corporal", "sergeant", "lieutenant", "colonel", "commander", "deputychief", "chief", "commisioner"
+	set {skgathering::rankinfo::donorRanks::*} to "vip", "vipplus", "mvp", "mvpplus", "mvpplusplus"
+	set {skgathering::rankinfo::prestiges::*} to "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+
+	# Make section for querying data in async
+	create new section with {_uuid} stored in {skgathering::asyncs::getRanksForUuid}:
+
+		# Create placeholder variables
+		set {_chemRankWeight} to 0
+		set {_policeRankWeight} to 0
+		set {_donorRankWeight} to 0
+		set {_goldRankWeight} to 0
+
+		# Get the player's groups
+		set {_player} to offlineplayer(loop-value)
+		set {_playerGroups::*} to the groups of {_player}
+
+		# Determine if player has a chem rank
+		loop {skgathering::rankinfo::chemranks::*}:
+			loop {skgathering::rankinfo::prestiges::*}:
+				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
+					set {_rankWeight} to loop-iteration-2
+					set {_prestigeWeight} to ((loop-iteration-3) - 1)
+					set {_chemRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
+					exit 3 sections
+
+		# Determine if player is max rank if no chem rank was found
+		if {_chemRankWeight} is 0:
+			if {_playerGroups::*} contains "maxrank":
+				set {_chemRankWeight} to 143
+
+		# Determine if player has a police rank
+		loop {skgathering::rankinfo::policeRanks::*}:
+			loop {skgathering::rankinfo::prestiges::*}:
+				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
+					set {_rankWeight} to loop-iteration-2
+					set {_prestigeWeight} to ((loop-iteration-3) - 1)
+					set {_policeRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
+					exit 3 sections
+
+		# Determine if player is max police rank if no police rank was found
+		if {_policeRankWeight} is 0:
+			if {_playerGroups::*} contains "maxcop":
+				set {_policeRankWeight} to 143
+
+		# Determine if player has a donor rank
+		loop {skgathering::rankinfo::donorRanks::*}:
+			if {_playerGroups::*} contains loop-value-2:
+				set {_donorRankWeight} to loop-iteration-2
+				exit loop
+
+		# Determine if player has gold rank
+		if {_playerGroups::*} contains "gold":
+			set {_goldRankWeight} to 1
+
+		# Return data
+		return "%{_chemRankWeight}%,%{_policeRankWeight}%,%{_donorRankWeight}%,%{_goldRankWeight}%"
+
 #######################
 # GATHERING FUNCTIONS #
 #######################
@@ -30,66 +90,6 @@ function skGathering_writeRanksToFile(outputFileName: string, outputFileTime: st
 	clear {_ranksOutputData::*}
 	add "UUID, chemrank, policerank, donorrank, goldrank" to {_ranksOutputData::*}
 
-	# Create lists of ranks and possible prestiges
-	set {_chemRanks::*} to "junky", "intern", "trainee", "assistant", "technician", "analyst", "engineer", "bioengineer", "chemist", "biochemist", "alchemist", "pharmacologist", "director"
-	set {_policeRanks::*} to "informant", "recruit", "cadet", "officer", "detective", "corporal", "sergeant", "lieutenant", "colonel", "commander", "deputychief", "chief", "commisioner"
-	set {_donorRanks::*} to "vip", "vipplus", "mvp", "mvpplus", "mvpplusplus"
-	set {_prestiges::*} to "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
-
-	# Make section for querying data in async
-	create new section with {_uuid} stored in {_getRanksForUuid}:
-
-		# Create placeholder variables
-		set {_chemRankWeight} to 0
-		set {_policeRankWeight} to 0
-		set {_donorRankWeight} to 0
-		set {_goldRankWeight} to 0
-
-		# Get the player's groups
-		set {_player} to offlineplayer(loop-value)
-		set {_playerGroups::*} to the groups of {_player}
-
-		# Determine if player has a chem rank
-		loop {_chemRanks::*}:
-			loop {_prestiges::*}:
-				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
-					set {_rankWeight} to loop-iteration-2
-					set {_prestigeWeight} to ((loop-iteration-3) - 1)
-					set {_chemRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
-					exit 3 sections
-
-		# Determine if player is max rank if no chem rank was found
-		if {_chemRankWeight} is 0:
-			if {_playerGroups::*} contains "maxrank":
-				set {_chemRankWeight} to 143
-
-		# Determine if player has a police rank
-		loop {_policeRanks::*}:
-			loop {_prestiges::*}:
-				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
-					set {_rankWeight} to loop-iteration-2
-					set {_prestigeWeight} to ((loop-iteration-3) - 1)
-					set {_policeRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
-					exit 3 sections
-
-		# Determine if player is max police rank if no police rank was found
-		if {_policeRankWeight} is 0:
-			if {_playerGroups::*} contains "maxcop":
-				set {_policeRankWeight} to 143
-
-		# Determine if player has a donor rank
-		loop {_donorRanks::*}:
-			if {_playerGroups::*} contains loop-value-2:
-				set {_donorRankWeight} to loop-iteration-2
-				exit loop
-
-		# Determine if player has gold rank
-		if {_playerGroups::*} contains "gold":
-			set {_goldRankWeight} to 1
-
-		# Return data
-		return "%{_chemRankWeight}%,%{_policeRankWeight}%,%{_donorRankWeight}%,%{_goldRankWeight}%"
-
 	# Loop over UUID's to get leaderboard positions
 	loop {skgathering::uuids::*}:
 
@@ -99,7 +99,7 @@ function skGathering_writeRanksToFile(outputFileName: string, outputFileTime: st
 			stop
 
 		# Get the player's ranks
-		run section {_getRanksForUuid} async with arguments loop-value and store result in {_result} and wait
+		run section {skgathering::asyncs::getRanksForUuid} async with arguments loop-value and store result in {_result} and wait
 
 		# Prepare data in CSV format
 		add "%loop-value%,%{_result}%" to {_ranksOutputData::*}

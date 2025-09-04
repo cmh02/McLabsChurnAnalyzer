@@ -18,23 +18,8 @@ on script load:
 	# Load labwars mongo collection
 	set {mongosk::collection::labwars} to mongo collection named "labwars13" of {mongosk::event}
 
-#######################
-# GATHERING FUNCTIONS #
-#######################
-
-function skGathering_writeLabWarsToFile(outputFileName: string, outputFileTime: string):
-
-	# Make sure the list of UUID's has been loaded
-	if {skgathering::uuids::*} is not set:
-		skGathering_messageLogFile("A call was made to get all player LabWars data, but UUID's have not been loaded yet!", false, "SEVERE")
-		stop
-
-	# Prepare data output list with headers
-	clear {_labWarsOutputData::*}
-	add "UUID, lw_rev_total, lw_rev_phase" to {_labWarsOutputData::*}
-
 	# Make section for querying data in async
-	create new section with {_uuid} stored in {_getLabWarsDataForUuid}:
+	create new section with {_uuid} stored in {skgathering::asyncs::getLabWarsDataForUuid}:
 
 		# Get the player's documents from Mongo database
 		set {_player} to offlineplayer({_uuid})
@@ -50,6 +35,21 @@ function skGathering_writeLabWarsToFile(outputFileName: string, outputFileTime: 
 		# Prepare data in CSV format
 		return "%{_revTotal}%,%{_revPhase}%"
 
+#######################
+# GATHERING FUNCTIONS #
+#######################
+
+function skGathering_writeLabWarsToFile(outputFileName: string, outputFileTime: string):
+
+	# Make sure the list of UUID's has been loaded
+	if {skgathering::uuids::*} is not set:
+		skGathering_messageLogFile("A call was made to get all player LabWars data, but UUID's have not been loaded yet!", false, "SEVERE")
+		stop
+
+	# Prepare data output list with headers
+	clear {_labWarsOutputData::*}
+	add "UUID, lw_rev_total, lw_rev_phase" to {_labWarsOutputData::*}
+
 	# Loop over UUID's to get votes
 	loop {skgathering::uuids::*}:
 
@@ -59,8 +59,7 @@ function skGathering_writeLabWarsToFile(outputFileName: string, outputFileTime: 
 			stop
 
 		# Get the player's labwars data
-		run section {_getLabWarsDataForUuid} async with arguments loop-value and store result in {_result} and wait
-
+		run section {skgathering::asyncs::getLabWarsDataForUuid} async with arguments loop-value and store result in {_result} and wait
 
 		# Prepare data in CSV format
 		add "%loop-value%,%{_result}%" to {_labWarsOutputData::*}

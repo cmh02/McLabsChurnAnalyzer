@@ -15,6 +15,22 @@ on script load:
 	# Log the script load in console
 	skGathering_messageLogFile("The Gathering Balance Skript has been loaded on server %{server}%!")
 
+	# Make section for querying data in async
+	create new section with {_uuid} stored in {skgathering::asyncs::getBalanceForUuid}:
+
+		# Get the player's balance
+		set {_player} to offlineplayer({_uuid})
+		set {_balance} to "%{_player}'s balance%"
+		replace every "," with "" in {_balance}
+		replace every "$" with "" in {_balance}
+		replace every "Dollar" with "" in {_balance}
+		replace every "dollar" with "" in {_balance}
+		replace every "Dollars" with "" in {_balance}
+		replace every "dollars" with "" in {_balance}
+
+		# Return data
+		return "%{_balance}%"
+
 #######################
 # GATHERING FUNCTIONS #
 #######################
@@ -30,22 +46,6 @@ function skGathering_writeBalancesToFile(outputFileName: string, outputFileTime:
 	clear {_balanceOutputData::*}
 	add "UUID, balance" to {_balanceOutputData::*}
 
-	# Make section for querying data in async
-	create new section with {_uuid} stored in {_getBalanceForUuid}:
-
-		# Get the player's balance
-		set {_player} to offlineplayer({_uuid})
-		set {_balance} to "%{_player}'s balance%"
-		replace every "," with "" in {_balance}
-		replace every "$" with "" in {_balance}
-		replace every "Dollar" with "" in {_balance}
-		replace every "dollar" with "" in {_balance}
-		replace every "Dollars" with "" in {_balance}
-		replace every "dollars" with "" in {_balance}
-
-		# Return data
-		return "%{_balance}%"
-
 	# Loop over UUID's to get balances
 	loop {skgathering::uuids::*}:
 
@@ -55,7 +55,7 @@ function skGathering_writeBalancesToFile(outputFileName: string, outputFileTime:
 			stop
 
 		# Get the player's balance
-		run section {_getBalanceForUuid} async with arguments loop-value and store result in {_result} and wait
+		run section {skgathering::asyncs::getBalanceForUuid} async with arguments loop-value and store result in {_result} and wait
 
 		# Prepare data in CSV format
 		add "%loop-value%,%{_result}%" to {_balanceOutputData::*}

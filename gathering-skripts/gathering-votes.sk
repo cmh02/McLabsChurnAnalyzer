@@ -15,6 +15,19 @@ on script load:
 	# Log the script load in console
 	skGathering_messageLogFile("The Gathering Votes Skript has been loaded on server %{server}%!")
 
+	# Make section for querying data in async
+	create new section with {_uuid} stored in {skgathering::asyncs::getVotesForUuid}:
+
+		# Get the player's votes for this voting event (month-year)
+		set {_player} to offlineplayer(loop-value)
+		set {_monthYearFormatted} to lowercase (now formatted as "MMMMyy")
+		set {_votes} to voteclaim_event_get({_player}, {_monthYearFormatted})
+		if {_votes} is not set:
+			set {_votes} to 0
+
+		# Return data
+		return "%{_votes}%"
+
 #######################
 # GATHERING FUNCTIONS #
 #######################
@@ -30,19 +43,6 @@ function skGathering_writeVotesToFile(outputFileName: string, outputFileTime: st
 	clear {_votesOutputData::*}
 	add "UUID, current_month_votes" to {_votesOutputData::*}
 
-	# Make section for querying data in async
-	create new section with {_uuid} stored in {_getVotesForUuid}:
-
-		# Get the player's votes for this voting event (month-year)
-		set {_player} to offlineplayer(loop-value)
-		set {_monthYearFormatted} to lowercase (now formatted as "MMMMyy")
-		set {_votes} to voteclaim_event_get({_player}, {_monthYearFormatted})
-		if {_votes} is not set:
-			set {_votes} to 0
-
-		# Return data
-		return "%{_votes}%"
-
 	# Loop over UUID's to get votes
 	loop {skgathering::uuids::*}:
 
@@ -52,7 +52,7 @@ function skGathering_writeVotesToFile(outputFileName: string, outputFileTime: st
 			stop
 
 		# Get the player's votes
-		run section {_getVotesForUuid} async with arguments loop-value and store result in {_result} and wait
+		run section {skgathering::asyncs::getVotesForUuid} async with arguments loop-value and store result in {_result} and wait
 
 		# Prepare data in CSV format
 		add "%loop-value%,%{_result}%" to {_votesOutputData::*}
