@@ -178,7 +178,7 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 		run section {skgathering::asyncs::getRanksForUuid} async with arguments loop-value and store result in {_ranksDataOutput} and wait
 
 		# Get votes data
-		run section {skgathering::asyncs::getVotesDataForUuid} async with arguments loop-value and store result in {_votesDataOutput} and wait
+		run section {skgathering::asyncs::getVotesForUuid} async with arguments loop-value and store result in {_votesDataOutput} and wait
 
 		# Make second PAPI request for Plan player data (data should be available now)
 		run section {skgathering::asyncs::getPlaceholdersForUuid} async with arguments loop-value and store result in {_planDataOutput} and wait
