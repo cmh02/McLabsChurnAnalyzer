@@ -19,7 +19,7 @@ on script load:
 	create new section with {_uuid} stored in {skgathering::asyncs::getVotesForUuid}:
 
 		# Get the player's votes for this voting event (month-year)
-		set {_player} to offlineplayer(loop-value)
+		set {_player} to offlineplayer({_uuid})
 		set {_monthYearFormatted} to lowercase (now formatted as "MMMMyy")
 		set {_votes} to voteclaim_event_get({_player}, {_monthYearFormatted})
 		if {_votes} is not set:

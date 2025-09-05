@@ -42,11 +42,11 @@ on script load:
 
 		# Check if the player exists in the mcmmo database
 		if the last java exception is set:
-			set {_player} to offlineplayer(loop-value)
-			skGathering_messageLogFile("Error Code GMD1: A Java Exception was detected while trying to check if player exists in MCMMO Database!%nl%-> Player: %{_player}%%nl%-> UUID: %loop-value%%nl%-> Error: %the last java exception%", false, "SEVERE")
+			set {_player} to offlineplayer({_uuid})
+			skGathering_messageLogFile("Error Code GMD1: A Java Exception was detected while trying to check if player exists in MCMMO Database!%nl%-> Player: %{_player}%%nl%-> UUID: %{_uuid}%%nl%-> Error: %the last java exception%", false, "SEVERE")
 			return "<none>"
 		else if {_doesPlayerExist} is false:
-			skGathering_messageLogFile("Warning Code GMD2: Player does not exist in MCMMO Database!%nl%-> UUID: %loop-value%", false, "WARNING")
+			skGathering_messageLogFile("Warning Code GMD2: Player does not exist in MCMMO Database!%nl%-> UUID: %{_uuid}%", false, "WARNING")
 			return "<none>"
 		else:
 			# Add power level to output

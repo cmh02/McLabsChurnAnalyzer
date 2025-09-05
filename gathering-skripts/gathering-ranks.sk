@@ -31,15 +31,15 @@ on script load:
 		set {_goldRankWeight} to 0
 
 		# Get the player's groups
-		set {_player} to offlineplayer(loop-value)
+		set {_player} to offlineplayer({_uuid})
 		set {_playerGroups::*} to the groups of {_player}
 
 		# Determine if player has a chem rank
 		loop {skgathering::rankinfo::chemranks::*}:
 			loop {skgathering::rankinfo::prestiges::*}:
-				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
-					set {_rankWeight} to loop-iteration-2
-					set {_prestigeWeight} to ((loop-iteration-3) - 1)
+				if {_playerGroups::*} contains "%loop-value-1%%loop-value-2%":
+					set {_rankWeight} to loop-iteration-1
+					set {_prestigeWeight} to ((loop-iteration-2) - 1)
 					set {_chemRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
 					exit 3 sections
 
@@ -51,9 +51,9 @@ on script load:
 		# Determine if player has a police rank
 		loop {skgathering::rankinfo::policeRanks::*}:
 			loop {skgathering::rankinfo::prestiges::*}:
-				if {_playerGroups::*} contains "%loop-value-2%%loop-value-3%":
-					set {_rankWeight} to loop-iteration-2
-					set {_prestigeWeight} to ((loop-iteration-3) - 1)
+				if {_playerGroups::*} contains "%loop-value-1%%loop-value-2%":
+					set {_rankWeight} to loop-iteration-1
+					set {_prestigeWeight} to ((loop-iteration-2) - 1)
 					set {_policeRankWeight} to {_rankWeight} + ({_prestigeWeight} * 13)
 					exit 3 sections
 
