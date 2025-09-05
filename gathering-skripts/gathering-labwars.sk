@@ -32,6 +32,12 @@ on script load:
 		set {_revTotal} to mongo value "all" of {_revTotalMongoDocument}
 		set {_revPhase} to mongo value "all" of {_revPhaseMongoDocument}
 
+		# Default values
+		if {_revTotal} is not set:
+			set {_revTotal} to 0
+		if {_revPhase} is not set:
+			set {_revPhase} to 0
+
 		# Prepare data in CSV format
 		return "%{_revTotal}%,%{_revPhase}%"
 
