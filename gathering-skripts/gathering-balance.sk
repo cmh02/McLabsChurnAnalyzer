@@ -28,6 +28,10 @@ on script load:
 		replace every "Dollars" with "" in {_balance}
 		replace every "dollars" with "" in {_balance}
 
+		# Default value incase balance was not set for some reason
+		if {_balance} is not set:
+			set {_balance} to "0"
+
 		# Return data
 		return "%{_balance}%"
 
