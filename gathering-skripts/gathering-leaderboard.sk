@@ -25,6 +25,16 @@ on script load:
 		set {_leaderboard_position_police_all} to leaderboard_place({_player}, "police", "alltime")
 		set {_leaderboard_position_police_week} to leaderboard_place({_player}, "police", "week")
 
+		# Default values
+		if {_leaderboard_position_chems_all} is not set:
+			set {_leaderboard_position_chems_all} to 0
+		if {_leaderboard_position_chems_week} is not set:
+			set {_leaderboard_position_chems_week} to 0
+		if {_leaderboard_position_police_all} is not set:
+			set {_leaderboard_position_police_all} to 0
+		if {_leaderboard_position_police_week} is not set:
+			set {_leaderboard_position_police_week} to 0
+
 		# Return data
 		return "%{_leaderboard_position_chems_all}%,%{_leaderboard_position_chems_week}%,%{_leaderboard_position_police_all}%,%{_leaderboard_position_police_week}%"
 
