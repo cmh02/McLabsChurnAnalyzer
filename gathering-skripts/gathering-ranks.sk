@@ -64,8 +64,8 @@ on script load:
 
 		# Determine if player has a donor rank
 		loop {skgathering::rankinfo::donorRanks::*}:
-			if {_playerGroups::*} contains loop-value-2:
-				set {_donorRankWeight} to loop-iteration-2
+			if {_playerGroups::*} contains loop-value:
+				set {_donorRankWeight} to loop-iteration
 				exit loop
 
 		# Determine if player has gold rank
