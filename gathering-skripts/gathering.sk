@@ -123,25 +123,25 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 		stop
 
 	# Make sure that all other skripts have been loaded
-	if script named "gathering-balance.sk" is not loaded:
+	if script named "gathering-skripts/gathering-balance.sk" is not loaded:
 		skGathering_messageLogFile("A call was made to get all player data, but the Gathering Balance Skript has not been loaded!", false, "SEVERE")
 		stop
-	else if script named "gathering-labwars.sk" is not loaded:
+	else if script named "gathering-skripts/gathering-labwars.sk" is not loaded:
 		skGathering_messageLogFile("A call was made to get all player data, but the Gathering LabWars Skript has not been loaded!", false, "SEVERE")
 		stop
-	else if script named "gathering-leaderboard.sk" is not loaded:
+	else if script named "gathering-skripts/gathering-leaderboard.sk" is not loaded:
 		skGathering_messageLogFile("A call was made to get all player data, but the Gathering Leaderboard Skript has not been loaded!", false, "SEVERE")
 		stop
-	else if script named "gathering-mcmmo.sk" is not loaded:
+	else if script named "gathering-skripts/gathering-mcmmo.sk" is not loaded:
 		skGathering_messageLogFile("A call was made to get all player data, but the Gathering MCMMO Skript has not been loaded!", false, "SEVERE")
 		stop
-	else if script named "gathering-plan.sk" is not loaded:
+	else if script named "gathering-skripts/gathering-plan.sk" is not loaded:
 		skGathering_messageLogFile("A call was made to get all player data, but the Gathering Plan Skript has not been loaded!", false, "SEVERE")
 		stop
-	else if script named "gathering-ranks.sk" is not loaded:
+	else if script named "gathering-skripts/gathering-ranks.sk" is not loaded:
 		skGathering_messageLogFile("A call was made to get all player data, but the Gathering Ranks Skript has not been loaded!", false, "SEVERE")
 		stop
-	else if script named "gathering-votes.sk" is not loaded:
+	else if script named "gathering-skripts/gathering-votes.sk" is not loaded:
 		skGathering_messageLogFile("A call was made to get all player data, but the Gathering Votes Skript has not been loaded!", false, "SEVERE")
 		stop
 
