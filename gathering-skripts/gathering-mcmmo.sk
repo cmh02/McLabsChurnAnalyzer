@@ -35,7 +35,7 @@ on script load:
 	set {skgathering::apiobjects::mcmmo} to new DatabaseAPI()
 
 	# Make section for interacting with API in async
-	create new section with {_uuid} stored in {skgathering::asyncs::getMcmmoData}:
+	create new section with {_uuid} stored in {skgathering::asyncs::getMcmmoDataForUuid}:
 
 		# Create list for storing individual player data
 		clear {_mcmmoDataPlayer::*}
@@ -103,8 +103,8 @@ function skGathering_writeMcmmoDataToFile(outputFileName: string, outputFileTime
 			stop
 
 		# Get player's data with API
-		run section {skgathering::asyncs::getMcmmoData} async with arguments loop-value and store result in {_result} and wait
-		
+		run section {skgathering::asyncs::getMcmmoDataForUuid} async with arguments loop-value and store result in {_result} and wait
+
 		# Prepare data in CSV format
 		add "%loop-value%,%{_result}%" to {_mcmmoData::*}
 
