@@ -148,7 +148,7 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 	# Initialize list for data collection
 	clear {_playerDataOutput::*}
 	set {_mcmmoSkillNamesJoined} to join {skgathering::mcmmoskillnames::*} with ",mcmmo_skill_"
-	add "UUID,balance,lw_rev_total,lw_rev_phase,leaderboard_position_chems_all,leaderboard_position_chems_week,leaderboard_position_police_all,leaderboard_position_police_week,mcmmo_power_level,mcmmo_skill_%{_mcmmoSkillNamesJoined}%,chemrank,policerank,donorrank,goldrank,current_month_votes,plan_player_time_total_raw,plan_player_time_month_raw,plan_player_time_week_raw,plan_player_time_day_raw,plan_player_time_afk_raw,plan_player_latest_session_length_raw,plan_player_favorite_server,plan_player_lastseen,plan_player_sessions_count" to {_votesOutputData::*}
+	add "UUID,balance,lw_rev_total,lw_rev_phase,leaderboard_position_chems_all,leaderboard_position_chems_week,leaderboard_position_police_all,leaderboard_position_police_week,mcmmo_power_level,mcmmo_skill_%{_mcmmoSkillNamesJoined}%,chemrank,policerank,donorrank,goldrank,current_month_votes,plan_player_time_total_raw,plan_player_time_month_raw,plan_player_time_week_raw,plan_player_time_day_raw,plan_player_time_afk_raw,plan_player_latest_session_length_raw,plan_player_favorite_server,plan_player_lastseen,plan_player_sessions_count" to {_playerDataOutput::*}
 
 	# Loop over all players in the specified range
 	set {_playersToProcess::*} to elements from 1 to {_uuidsToProcess} of {skgathering::uuids::*}
@@ -160,10 +160,10 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 			stop
 
 		# Make initial PAPI request for Plan player data to save time instead of waiting (data will be none until second request)
-		run section {skgathering::asyncs::getPlaceholdersForUuid} async with arguments loop-value and store result in {_planDataOutput} and wait
+		run section {skgathering::asyncs::getPlaceholdersForUuid} async with arguments loop-value and store result in {_blahblah} and wait
 
 		# Get balance data
-		run section {skgathering::asyncs::getBalanceDataForUuid} async with arguments loop-value and store result in {_balanceDataOutput} and wait
+		run section {skgathering::asyncs::getBalanceForUuid} async with arguments loop-value and store result in {_balanceDataOutput} and wait
 
 		# Get labwars data
 		run section {skgathering::asyncs::getLabWarsDataForUuid} async with arguments loop-value and store result in {_labWarsDataOutput} and wait
