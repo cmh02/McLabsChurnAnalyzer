@@ -48,7 +48,7 @@ on script load:
 
 			# Fill list with <none> for power level and all skills
 			loop {skgathering::mcmmoskillnames::*}:
-				add "<none>" to {_mcmmoDataPlayer::*}:
+				add "<none>" to {_mcmmoDataPlayer::*}
 
 		else if {_doesPlayerExist} is false:
 			skGathering_messageLogFile("Warning Code GMD2: Player does not exist in MCMMO Database!%nl%-> UUID: %{_uuid}%", false, "WARNING")
