@@ -175,7 +175,7 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 		run section {skgathering::asyncs::getMcmmoDataForUuid} async with arguments loop-value and store result in {_mcmmoDataOutput} and wait
 
 		# Get ranks data
-		run section {skgathering::asyncs::getRanksDataForUuid} async with arguments loop-value and store result in {_ranksDataOutput} and wait
+		run section {skgathering::asyncs::getRanksForUuid} async with arguments loop-value and store result in {_ranksDataOutput} and wait
 
 		# Get votes data
 		run section {skgathering::asyncs::getVotesDataForUuid} async with arguments loop-value and store result in {_votesDataOutput} and wait
