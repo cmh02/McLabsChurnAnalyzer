@@ -44,10 +44,20 @@ on script load:
 		if the last java exception is set:
 			set {_player} to offlineplayer({_uuid})
 			skGathering_messageLogFile("Error Code GMD1: A Java Exception was detected while trying to check if player exists in MCMMO Database!%nl%-> Player: %{_player}%%nl%-> UUID: %{_uuid}%%nl%-> Error: %the last java exception%", false, "SEVERE")
-			return "<none>"
+			add "<none>" to {_mcmmoDataPlayer::*}
+
+			# Fill list with <none> for power level and all skills
+			loop {skgathering::mcmmoskillnames::*}:
+				add "<none>" to {_mcmmoDataPlayer::*}:
+
 		else if {_doesPlayerExist} is false:
 			skGathering_messageLogFile("Warning Code GMD2: Player does not exist in MCMMO Database!%nl%-> UUID: %{_uuid}%", false, "WARNING")
-			return "<none>"
+
+			# Fill list with <none> for power level and all skills
+			add "<none>" to {_mcmmoDataPlayer::*}
+			loop {skgathering::mcmmoskillnames::*}:
+				add "<none>" to {_mcmmoDataPlayer::*}
+
 		else:
 			# Add power level to output
 			set {_powerLevel} to try ExperienceAPI.getPowerLevelOffline({_uuid})
