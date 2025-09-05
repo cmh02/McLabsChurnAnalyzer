@@ -22,6 +22,8 @@ on script load:
 		set {_player} to offlineplayer({_uuid})
 		set {_monthYearFormatted} to lowercase (now formatted as "MMMMyy")
 		set {_votes} to voteclaim_event_get({_player}, {_monthYearFormatted})
+
+		# Default value
 		if {_votes} is not set:
 			set {_votes} to 0
 
