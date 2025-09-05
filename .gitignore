@@ -204,7 +204,7 @@ __marimo__/
 data/gatheringoutput/*/*.csv
 
 # Private data saves
-data/anonoutput/private/*/*.csv
+data/anonymized/private/*/*.csv
 data/combined/private/*/*.csv
 data/cleaned/private/*/*.csv
 data/featurized/private/*/*.csv
