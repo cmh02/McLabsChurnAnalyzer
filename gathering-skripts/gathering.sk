@@ -194,8 +194,8 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 ################
 on tab complete of "/gatherdata":
 	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard", "ranks", "votes", "labwars", "all", "estop"
-	set tab completions for position 2 to "<identifier>"
-	set tab completions for position 3 to "<num uuids | leave unset for all>"
+	set tab completions for position 2 to "<identifier>", "now"
+	set tab completions for position 3 to "<num uuids | leave unset for all>", "all"
 
 command /gatherdata [<text>] [<text>] [<text>]:
 	# Set the permission node to use gatherdata command
@@ -207,13 +207,19 @@ command /gatherdata [<text>] [<text>] [<text>]:
 	# Main-Command: GatherData
 	trigger:
 		# Determine identifier (either unix of now, or user-provided)
-		if arg 2 is not set:
+		if any:
+			arg 2 is not set
+			arg 2 is "now"
+		then:
 			set {_identifier} to unix timestamp of now
 		else:
 			set {_identifier} to arg 2
 
 		# Determine number of UUID's (either set or all)
-		if arg 3 is not set:
+		if any:
+			arg 3 is not set
+			arg 3 is "all"
+		then:
 			set {_numUuids} to size of {skgathering::uuids::*}
 		else:
 			set {_numUuids} to arg 3 parsed as int
