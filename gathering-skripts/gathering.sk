@@ -244,5 +244,6 @@ command /gatherdata [<text>] [<text>] [<text>]:
 			skGathering_writeAllDataToFile("PlayerData", "%{_identifier}%", {_numUuids})
 		else if arg 1 is "estop":
 			set {skgathering::estop} to true
+			skGathering_messagePlayer(player, "&cE-Stop has been activated! Any ongoing data gathering operations will be aborted. Please reload the skript to reset.")
 		else:
 			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', 'leaderboard', 'ranks', 'votes', 'labwars', or 'all'.")
