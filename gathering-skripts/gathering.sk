@@ -151,8 +151,8 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 	add "UUID,balance,lw_rev_total,lw_rev_phase,leaderboard_position_chems_all,leaderboard_position_chems_week,leaderboard_position_police_all,leaderboard_position_police_week,mcmmo_power_level,mcmmo_skill_%{_mcmmoSkillNamesJoined}%,chemrank,policerank,donorrank,goldrank,current_month_votes,plan_player_time_total_raw,plan_player_time_month_raw,plan_player_time_week_raw,plan_player_time_day_raw,plan_player_time_afk_raw,plan_player_latest_session_length_raw,plan_player_favorite_server,plan_player_lastseen,plan_player_sessions_count" to {_votesOutputData::*}
 
 	# Loop over all players in the specified range
-	set {_playersToProcess} to elements from 1 to {_uuidsToProcess} of {skgathering::uuids::*}
-	loop {_playersToProcess}:
+	set {_playersToProcess::*} to elements from 1 to {_uuidsToProcess} of {skgathering::uuids::*}
+	loop {_playersToProcess::*}:
 
 		# Check if estop is activated
 		if {skgathering::estop} is true:
