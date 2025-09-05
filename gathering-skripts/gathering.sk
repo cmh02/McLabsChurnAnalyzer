@@ -154,6 +154,11 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 	set {_playersToProcess} to elements from 1 to {_uuidsToProcess} of {skgathering::uuids::*}
 	loop {_playersToProcess}:
 
+		# Check if estop is activated
+		if {skgathering::estop} is true:
+			skGathering_messageLogFile("E-Stop activated! Aborting data gathering operation.", false, "WARNING")
+			stop
+
 		# Make initial PAPI request for Plan player data to save time instead of waiting (data will be none until second request)
 		run section {skgathering::asyncs::getPlaceholdersForUuid} async with arguments loop-value and store result in {_planDataOutput} and wait
 
