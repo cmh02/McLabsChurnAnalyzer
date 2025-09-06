@@ -213,3 +213,4 @@ data/targetted/private/*/*.csv
 # DS Store
 data/.DS_Store
 .DS_Store
+McLabsChurnAnalyzer.code-workspace
