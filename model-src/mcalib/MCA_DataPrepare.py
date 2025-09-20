@@ -37,6 +37,7 @@ class McaOutputMode(Enum):
 	NONE = "none"
 	PUBLIC = "public"
 	PRIVATE = "private"
+	FINAL = "final"
 	ALL = "all"
 
 class McaStorageMode(Enum):
@@ -97,12 +98,12 @@ class McaDataPrepare:
 			self.featurizedFolderPath_private = os.path.join(self.dataFolderPath, "featurized/private/")
 			os.makedirs(self.featurizedFolderPath_private, exist_ok=True)
 
-		# Set up output folder path (targetted folder always gets made)
-		self.targettedFolderPath_public = os.path.join(self.dataFolderPath, "targetted/public/")
-		os.makedirs(self.targettedFolderPath_public, exist_ok=True)
+		# Set up output folder path (output folder always gets made)
+		self.outputFolderPath_public = os.path.join(self.dataFolderPath, "prepared/public/")
+		os.makedirs(self.outputFolderPath_public, exist_ok=True)
 
-		self.targettedFolderPath_private = os.path.join(self.dataFolderPath, "targetted/private/")
-		os.makedirs(self.targettedFolderPath_private, exist_ok=True)
+		self.outputFolderPath_private = os.path.join(self.dataFolderPath, "prepared/private/")
+		os.makedirs(self.outputFolderPath_private, exist_ok=True)
 
 		# Get the names of all input files using glob
 		inputDataFiles = glob(os.path.join(self.inputFolderPath, "**", "*.csv"), recursive=True)
@@ -232,14 +233,14 @@ class McaDataPrepare:
 			df["churn"] = df["plan_player_lastseen"].apply(lambda x: 1 if x >= 1209600 else 0)
 
 			# If configured, create private output path and save dataframe to path
-			if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.targettedFolderPath_private, dataRelativeFilePath)
+			if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.FINAL, McaOutputMode.ALL):
+				outputFilePath = os.path.join(self.outputFolderPath_private, dataRelativeFilePath)
 				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
 				df.to_csv(outputFilePath, index=False)
 
 			# If configured, create public output path and save dataframe without UUID's to path
-			if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.targettedFolderPath_public, dataRelativeFilePath)
+			if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.FINAL, McaOutputMode.ALL):
+				outputFilePath = os.path.join(self.outputFolderPath_public, dataRelativeFilePath)
 				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
 				df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
 
