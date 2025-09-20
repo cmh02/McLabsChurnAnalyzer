@@ -18,8 +18,7 @@ on script load:
 
 	# Load UUID's for gathering player data
 	skGathering_loadUuidsFromEssentials()
-	set {_numUuids} to amount of {skgathering::uuids::*}
-	skGathering_messageLogFile("-> Loaded %{_numUuids}% player UUID's from EssentialsX!")
+	skGathering_messageLogFile("-> Loaded %amount of {skgathering::uuids::*}% player UUID's from EssentialsX!")
 
 	# Set estop to false
 	set {skgathering::estop} to false
@@ -91,6 +90,26 @@ function skGathering_messageOutputFile(type: string="GeneralOutput", timeDirecto
 
 	# Log file writing (execution would have stopped if an error occured)
 	skGathering_messageLogFile("Writing to output file `%{_filePath}%` has completed without error!", false, "NORMAL")
+
+#####################
+# SCHEDULING EVENTS #
+#####################
+
+# Periodic check to see if we need to capture data automatically
+every 5 minutes:
+	if {skgathering::auto} is true:
+
+		# Check if we are past the time interval
+		if any:
+			{skgathering::lastautomaticcollection} is not set
+			{skgathering::lastautomaticcollection} was more than {skgathering::autointerval} ago
+		then:
+			# Update last collection time
+			set {skgathering::lastautomaticcollection} to now
+
+			# Start data gathering for all players across all metrics
+			skGathering_messageLogFile("Automatic data gathering is enabled, starting data capture for all players!", false, "NORMAL")
+			skGathering_writeAllDataToFile("PlayerData", "%unix timestamp of now%", amount of {skgathering::uuids::*})
 
 #####################
 # SUPPORT FUNCTIONS #
@@ -193,7 +212,7 @@ function skGathering_writeAllDataToFile(outputFileName: string, outputFileTime: 
 # MAIN COMMAND #
 ################
 on tab complete of "/gatherdata":
-	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard", "ranks", "votes", "labwars", "all", "estop"
+	set tab completions for position 1 to "balance", "plan", "mcmmo", "leaderboard", "ranks", "votes", "labwars", "all", "estop", "auto"
 	set tab completions for position 2 to "<identifier>", "now"
 	set tab completions for position 3 to "<num uuids | leave unset for all>", "all"
 
@@ -220,7 +239,7 @@ command /gatherdata [<text>] [<text>] [<text>]:
 			arg 3 is not set
 			arg 3 is "all"
 		then:
-			set {_numUuids} to size of {skgathering::uuids::*}
+			set {_numUuids} to amount of {skgathering::uuids::*}
 		else:
 			set {_numUuids} to arg 3 parsed as int
 
@@ -248,8 +267,28 @@ command /gatherdata [<text>] [<text>] [<text>]:
 			skGathering_writeLabWarsToFile("LabWars", "%{_identifier}%")
 		else if arg 1 is "all":
 			skGathering_writeAllDataToFile("PlayerData", "%{_identifier}%", {_numUuids})
+
+		# E-Stop Command will instantly stop any ongoing data gathering operations
 		else if arg 1 is "estop":
 			set {skgathering::estop} to true
 			skGathering_messagePlayer(player, "&cE-Stop has been activated! Any ongoing data gathering operations will be aborted. Please reload the skript to reset.")
+		
+		# Auto Command will toggle automatic data gathering every <interval> days
+		else if arg 1 is "auto":
+
+			# If the second arg is set, update interval
+			if arg 2 is set:
+				set {_interval} to arg 2 parsed as int
+				if {_interval} > 0:
+					set {skgathering::autointerval} to timespan({_interval}, days)
+					skGathering_messagePlayer(player, "&aAutomatic data gathering interval has been set to %{_interval}% days.")
+					
+			# Toggle auto gathering
+			if {skgathering::auto} is true:
+				set {skgathering::auto} to false
+				skGathering_messagePlayer(player, "&cAutomatic data gathering has been disabled.")
+			else:
+				set {skgathering::auto} to true
+				skGathering_messagePlayer(player, "&aAutomatic data gathering has been enabled.")
 		else:
 			skGathering_messagePlayer(player, "&cInvalid argument! Please use 'balance', 'plan', 'mcmmo', 'leaderboard', 'ranks', 'votes', 'labwars', or 'all'.")
