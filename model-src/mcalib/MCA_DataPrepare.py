@@ -44,6 +44,10 @@ class McaStorageMode(Enum):
 	NONE = "none"
 	INSTANCE = "instance"
 
+class McaHashMode(Enum):
+	NONE = "none"
+	SHA256 = "sha256"
+
 '''
 CLASS DEFINITION
 '''
