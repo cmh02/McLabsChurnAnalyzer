@@ -54,6 +54,23 @@ function skGathering_messageLogFile(message: strings="Error in Log File Message 
 	messageLogFile("GsK", {_message::*}, "gathering.log", {_addNewline}, {_severity})
 
 function skGathering_messageOutputFile(type: string="GeneralOutput", timeDirectory: string="%unix timestamp of now%", message: strings="Error in Output File Message - No Input Given!"):
+
+	# Make sure that the type is valid
+	if any:
+		{_type} is ""
+		{_type} is not set
+	then:
+		skGathering_messageLogFile("WARNING: An attempt was made to write to an output file, but the type was not set! Defaulting to 'PlayerData'.", false, "WARNING")
+		set {_type} to "PlayerData"
+
+	# Make sure that the time directory is valid
+	if any:
+		{_timeDirectory} is ""
+		{_timeDirectory} is not set
+	then:
+		skGathering_messageLogFile("WARNING: An attempt was made to write to an output file, but the time directory was not set! Defaulting to current unix timestamp.", false, "WARNING")
+		set {_timeDirectory} to "%unix timestamp of now%"
+	
 	# Create directory and file paths
 	set {_directoryPath} to "plugins/Skript/gatheringoutput/%{_timeDirectory}%/"
 	set {_filePath} to "%{_type}%.csv"
