@@ -16,12 +16,13 @@ on script load:
 	# Log the script load in console
 	skGathering_messageLogFile("The Gathering Utilities Skript has been loaded on server %{server}%!")
 
-	# Load UUID's for gathering player data
-	skGathering_loadUuidsFromEssentials()
-	skGathering_messageLogFile("-> Loaded %amount of {skgathering::uuids::*}% player UUID's from EssentialsX!")
-
 	# Set estop to false
 	set {skgathering::estop} to false
+
+	# Load UUID's for gathering player data
+	wait 30 seconds
+	skGathering_loadUuidsFromEssentials()
+	skGathering_messageLogFile("-> Loaded %amount of {skgathering::uuids::*}% player UUID's from EssentialsX!")
 
 
 # Skript Reflect Imports
