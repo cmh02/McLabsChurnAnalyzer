@@ -4,7 +4,8 @@ Author: @cmh02
 '''
 
 # Specific imports
-from .MCA_DataPrepare import McaDataPrepare, McaOutputMode, McaStorageMode, McaHashMode
+from .MCA_Enum import McaOutputMode, McaStorageMode, McaHashMode
+from .MCA_DataPrepare import McaDataPrepare
 
 # Define imports for *
-__all__ = ["McaDataPrepare", "McaOutputMode", "McaStorageMode", "McaHashMode"]
+__all__ = ["McaOutputMode", "McaStorageMode", "McaHashMode", "McaDataPrepare"]

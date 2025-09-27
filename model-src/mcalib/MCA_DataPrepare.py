@@ -8,7 +8,6 @@ This module will provide a pipeline for per-timestamp data preparation tasks:
 - Active Variable Creation
 '''
 
-
 '''
 MODULE/PACKAGE IMPORTS
 '''
