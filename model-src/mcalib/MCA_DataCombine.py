@@ -39,7 +39,7 @@ CLASS DEFINITION
 '''
 
 class McaDataCombine:
-	def __init__(self, inputFilePath1: str, inputFilePath2: str, autoCombine: bool=True, outputMode: McaOutputMode=McaOutputMode.ALL, storageMode: McaStorageMode=McaStorageMode.NONE):
+	def __init__(self, inputFilePath1: str, inputFilePath2: str, outputFileName: str, autoCombine: bool=True, outputMode: McaOutputMode=McaOutputMode.ALL, storageMode: McaStorageMode=McaStorageMode.NONE):
 
 		# Perform checks on input parameters
 		if outputMode not in [McaOutputMode.FINAL, McaOutputMode.NONE]:
@@ -63,6 +63,8 @@ class McaDataCombine:
 		self.outputFolderPath = os.path.join(self.dataFolderPath, "combined")
 		self.outputFolderPathPublic = os.path.join(self.outputFolderPath, "public")
 		self.outputFolderPathPrivate = os.path.join(self.outputFolderPath, "private")
+		self.outputFilePathPublic = os.path.join(self.outputFolderPathPublic, outputFileName)
+		self.outputFilePathPrivate = os.path.join(self.outputFolderPathPrivate, outputFileName)
 
 		# Create output directories if they do not exist
 		os.makedirs(self.outputFolderPathPublic, exist_ok=True)
@@ -120,15 +122,11 @@ class McaDataCombine:
 		# Make public and private output
 		if self.outputMode in [McaOutputMode.FINAL, McaOutputMode.ALL]:
 
-			# Create the output file path
-			outputFilePathPublic = os.path.join(self.outputFolderPathPublic, "CombinedData.csv")
-			outputFilePathPrivate = os.path.join(self.outputFolderPathPrivate, "CombinedData.csv")
-
 			# Save the dataframe to the private output path
-			self.df.to_csv(outputFilePathPrivate, index=False)
+			self.df.to_csv(self.outputFilePathPrivate, index=False)
 
 			# Save the dataframe to the public output path without UUID column
-			self.df.drop(columns=['UUID']).to_csv(outputFilePathPublic, index=False)
+			self.df.drop(columns=['UUID']).to_csv(self.outputFilePathPublic, index=False)
 
 	def analyzeData(self):
 		# Check that we have instance storage
