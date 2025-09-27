@@ -280,7 +280,7 @@ class McaDataPrepare:
 		# Print analysis for dataframe
 		print(f"{self.dfdict[timestamp].drop(columns=['UUID']).describe().T.map(lambda x: f"{x:.4f}")}")
 
-	def _planDateToSecondsSince(self, planDateString: str, untilUnixTimeStamp: int) -> int:
+	def _planDateToSecondsSince(self, planDateString: str, untilUnixTimeStamp: float) -> int:
 		# Convert the unix timestamp into a datetime object
 		untilDateTime = datetime.fromtimestamp(untilUnixTimeStamp)
 
