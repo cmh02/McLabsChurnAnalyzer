@@ -26,24 +26,8 @@ import pandas as pd
 # Output/Display
 from enum import Enum
 
-'''
-ENUM DEFINITIONS
-'''
-
-class McaOutputMode(Enum):
-	NONE = "none"
-	PUBLIC = "public"
-	PRIVATE = "private"
-	FINAL = "final"
-	ALL = "all"
-
-class McaStorageMode(Enum):
-	NONE = "none"
-	INSTANCE = "instance"
-
-class McaHashMode(Enum):
-	NONE = "none"
-	SHA256 = "sha256"
+# Custom
+from mcalib import McaOutputMode, McaStorageMode, McaHashMode
 
 '''
 CLASS DEFINITION
