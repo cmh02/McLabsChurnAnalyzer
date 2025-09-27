@@ -53,11 +53,14 @@ CLASS DEFINITION
 '''
 
 class McaDataPrepare:
-	def __init__(self, inputFolderPath: str, outputMode: McaOutputMode=McaOutputMode.ALL, storageMode: McaStorageMode=McaStorageMode.NONE, hashMode: McaHashMode=McaHashMode.NONE):
+	def __init__(self, inputFilePath: str, autoPrepare: bool=True, outputMode: McaOutputMode=McaOutputMode.ALL, storageMode: McaStorageMode=McaStorageMode.NONE, hashMode: McaHashMode=McaHashMode.NONE):
 
 		# Save instance configuration
-		self.inputFolderPath = inputFolderPath
-		self.dataFolderPath = os.path.dirname(os.path.dirname(inputFolderPath))
+		self.inputFilePath = inputFilePath
+		self.timestampFolderPath = os.path.dirname(inputFilePath)
+		self.gatherDataFolderPath = os.path.dirname(self.timestampFolderPath)
+		self.dataFolderPath = os.path.dirname(os.path.dirname(inputFilePath))
+		self.relativeInputFilePath = os.path.relpath(self.inputFilePath, self.gatherDataFolderPath)
 		self.outputMode = outputMode
 		self.storageMode = storageMode
 		self.hashMode = hashMode
@@ -76,11 +79,17 @@ class McaDataPrepare:
 		
 		# Print our initial configuration
 		print(f"A New MCA Data Preparer has been created!")
-		print(f"-> Input Folder Path: {self.inputFolderPath}")
+		print(f"-> Input File Path: {self.inputFilePath}")
+		print(f"-> Timestamp Folder Path: {self.timestampFolderPath}")
 		print(f"-> Data Directory Path: {self.dataFolderPath}")
+		print(f"-> AutoPrepare Mode: {autoPrepare}")
 		print(f"-> Output Mode: {self.outputMode}")
 		print(f"-> Storage Mode: {self.storageMode}")
 		print(f"-> Hash Mode: {self.hashMode}")
+
+		# If configured, run the data preparation steps
+		if autoPrepare:
+			self.prepareData()
 
 	def prepareData(self):
 
@@ -119,154 +128,145 @@ class McaDataPrepare:
 			self.outputFolderPath_private = os.path.join(self.dataFolderPath, "prepared/private/")
 			os.makedirs(self.outputFolderPath_private, exist_ok=True)
 
-		# Get the names of all input files using glob
-		inputDataFiles = glob(os.path.join(self.inputFolderPath, "**", "*.csv"), recursive=True)
+		# Read the input CSV file
+		df = pd.read_csv(self.inputFilePath)
 
-		# Iterate through the files
-		for filePath in tqdm(iterable=inputDataFiles, desc="Preparing Data Files", unit="file"):
+		# If hashing is enabled, anonymize the UUID column (UUID -> hash(PEPPER + UUID))
+		if self.hashMode != McaHashMode.NONE:
 
-			# Get relative path for input file location
-			dataRelativeFilePath = os.path.relpath(filePath, self.inputFolderPath)
+			# Hash the UUID's using configured hash mode
+			if self.hashMode == McaHashMode.SHA256:
+				df['UUID'] = [hashlib.sha256(f"{self.MCA_PEPPERKEY}:{uuid}".encode()).hexdigest() for uuid in df['UUID']]
+			else:
+				raise ValueError(f"Hash Mode Not Implemented: {self.hashMode}")
 
-			# Read the input CSV file
-			df = pd.read_csv(filePath)
-
-			# If hashing is enabled, anonymize the UUID column (UUID -> hash(PEPPER + UUID))
-			if self.hashMode != McaHashMode.NONE:
-
-				# Hash the UUID's using configured hash mode
-				if self.hashMode == McaHashMode.SHA256:
-					df['UUID'] = [hashlib.sha256(f"{self.MCA_PEPPERKEY}:{uuid}".encode()).hexdigest() for uuid in df['UUID']]
-				else:
-					raise ValueError(f"Hash Mode Not Implemented: {self.hashMode}")
-
-				# If configured, create private hashed output path and save dataframe to path
-				if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
-					outputFilePath = os.path.join(self.anonymizedFolderPath_private, dataRelativeFilePath)
-					os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-					df.to_csv(outputFilePath, index=False)
-
-				# If configured, create public hashed output path and save dataframe without UUID's to path
-				if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-					outputFilePath = os.path.join(self.anonymizedFolderPath_public, dataRelativeFilePath)
-					os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-					df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
-
-			# Replace <none> with NULL
-			df.replace("<none>", pd.NA, inplace=True)
-			df.replace(" <none>", pd.NA, inplace=True)
-
-			# Replace "-" with NULL
-			df.replace("-", pd.NA, inplace=True)
-
-			# Fill missing values for other features
-			df.fillna({
-				"mcmmo_power_level": 0,
-				"mcmmo_skill_ACROBATICS": 0,
-				"mcmmo_skill_ALCHEMY": 0,
-				"mcmmo_skill_ARCHERY": 0,
-				"mcmmo_skill_AXES": 0,
-				"mcmmo_skill_CROSSBOWS": 0,
-				"mcmmo_skill_EXCAVATION": 0,
-				"mcmmo_skill_FISHING": 0,
-				"mcmmo_skill_HERBALISM": 0,
-				"mcmmo_skill_MACES": 0,
-				"mcmmo_skill_MINING": 0,
-				"mcmmo_skill_REPAIR": 0,
-				"mcmmo_skill_SALVAGE": 0,
-				"mcmmo_skill_SMELTING": 0,
-				"mcmmo_skill_SWORDS": 0,
-				"mcmmo_skill_TAMING": 0,
-				"mcmmo_skill_TRIDENTS": 0,
-				"mcmmo_skill_UNARMED": 0,
-				"mcmmo_skill_WOODCUTTING": 0,
-				"lw_rev_total": 0,
-				"lw_rev_phase": 0,
-				"chemrank": 0,
-				"policerank": 0,
-				"donorrank": 0,
-				"goldrank": 0,
-				"current_month_votes": 0,
-				"plan_player_time_total_raw": 0,
-				"plan_player_time_month_raw": 0,
-				"plan_player_time_week_raw": 0,
-				"plan_player_time_day_raw": 0,
-				"plan_player_time_afk_raw": 0,
-				"plan_player_latest_session_length_raw": 0,
-				"plan_player_favorite_server": "Spawn",
-				"plan_player_sessions_count": 1,
-				"leaderboard_position_chems_all": 0,
-				"leaderboard_position_chems_week": 0,
-				"leaderboard_position_police_all": 0,
-				"leaderboard_position_police_week": 0,
-				"balance": 0
-			}, inplace=True)
-			
-			# Drop players missing a last-seen date
-			df.dropna(subset=["plan_player_lastseen"], inplace=True)
-
-			# Convert last seen times into seconds since last seen
-			recordingTimestamp = float(os.path.basename(os.path.dirname(filePath)))
-			df["plan_player_lastseen"] = df["plan_player_lastseen"].apply(lambda x: self._planDateToSecondsSince(planDateString=x, untilUnixTimeStamp=recordingTimestamp))
-
-			# Remove any extra text from balance column
-			df["balance"] = df["balance"].replace({"dollars": "", "dollar": "", "money": "", "Dollars": "", "Dollar": "", "Money": ""}, regex=True)
-
-			# If configured, create private cleaned output path and save dataframe to path
+			# If configured, create private hashed output path and save dataframe to path
 			if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.cleanedFolderPath_private, dataRelativeFilePath)
+				outputFilePath = os.path.join(self.anonymizedFolderPath_private, self.relativeInputFilePath)
 				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
 				df.to_csv(outputFilePath, index=False)
 
-			# If configured, create public cleaned output path and save dataframe without UUID's to path
+			# If configured, create public hashed output path and save dataframe without UUID's to path
 			if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.cleanedFolderPath_public, dataRelativeFilePath)
+				outputFilePath = os.path.join(self.anonymizedFolderPath_public, self.relativeInputFilePath)
 				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
 				df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
 
-			# Derived Feature: Relative playtime between total and month (how much of the playtime was this month)
-			df["plan_player_relativePlaytime_totalmonth"] = df["plan_player_time_total_raw"].astype(float) / df["plan_player_time_month_raw"].astype(float)
+		# Replace <none> with NULL
+		df.replace("<none>", pd.NA, inplace=True)
+		df.replace(" <none>", pd.NA, inplace=True)
 
-			# Derived Feature: Relative playtime between week and month (how much of the month was this week)
-			df["plan_player_relativePlaytime_weekmonth"] = df["plan_player_time_week_raw"].astype(float) / df["plan_player_time_month_raw"].astype(float)
+		# Replace "-" with NULL
+		df.replace("-", pd.NA, inplace=True)
 
-			# Derived Feature: Relative playtime between day and week (how much of the week was this day)
-			df["plan_player_relativePlaytime_dayweek"] = df["plan_player_time_day_raw"].astype(float) / df["plan_player_time_week_raw"].astype(float)
+		# Fill missing values for other features
+		df.fillna({
+			"mcmmo_power_level": 0,
+			"mcmmo_skill_ACROBATICS": 0,
+			"mcmmo_skill_ALCHEMY": 0,
+			"mcmmo_skill_ARCHERY": 0,
+			"mcmmo_skill_AXES": 0,
+			"mcmmo_skill_CROSSBOWS": 0,
+			"mcmmo_skill_EXCAVATION": 0,
+			"mcmmo_skill_FISHING": 0,
+			"mcmmo_skill_HERBALISM": 0,
+			"mcmmo_skill_MACES": 0,
+			"mcmmo_skill_MINING": 0,
+			"mcmmo_skill_REPAIR": 0,
+			"mcmmo_skill_SALVAGE": 0,
+			"mcmmo_skill_SMELTING": 0,
+			"mcmmo_skill_SWORDS": 0,
+			"mcmmo_skill_TAMING": 0,
+			"mcmmo_skill_TRIDENTS": 0,
+			"mcmmo_skill_UNARMED": 0,
+			"mcmmo_skill_WOODCUTTING": 0,
+			"lw_rev_total": 0,
+			"lw_rev_phase": 0,
+			"chemrank": 0,
+			"policerank": 0,
+			"donorrank": 0,
+			"goldrank": 0,
+			"current_month_votes": 0,
+			"plan_player_time_total_raw": 0,
+			"plan_player_time_month_raw": 0,
+			"plan_player_time_week_raw": 0,
+			"plan_player_time_day_raw": 0,
+			"plan_player_time_afk_raw": 0,
+			"plan_player_latest_session_length_raw": 0,
+			"plan_player_favorite_server": "Spawn",
+			"plan_player_sessions_count": 1,
+			"leaderboard_position_chems_all": 0,
+			"leaderboard_position_chems_week": 0,
+			"leaderboard_position_police_all": 0,
+			"leaderboard_position_police_week": 0,
+			"balance": 0
+		}, inplace=True)
+		
+		# Drop players missing a last-seen date
+		df.dropna(subset=["plan_player_lastseen"], inplace=True)
 
-			# Fix missing / infinities
-			df.replace([np.inf, -np.inf], np.nan, inplace=True)
-			df.fillna(0, inplace=True)
+		# Convert last seen times into seconds since last seen
+		recordingTimestamp = float(os.path.basename(os.path.dirname(self.inputFilePath)))
+		df["plan_player_lastseen"] = df["plan_player_lastseen"].apply(lambda x: self._planDateToSecondsSince(planDateString=x, untilUnixTimeStamp=recordingTimestamp))
 
-			# If configured, create private featurized output path and save dataframe to path
-			if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.featurizedFolderPath_private, dataRelativeFilePath)
-				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-				df.to_csv(outputFilePath, index=False)
+		# Remove any extra text from balance column
+		df["balance"] = df["balance"].replace({"dollars": "", "dollar": "", "money": "", "Dollars": "", "Dollar": "", "Money": ""}, regex=True)
 
-			# If configured, create public featurized output path and save dataframe without UUID's to path
-			if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.featurizedFolderPath_public, dataRelativeFilePath)
-				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-				df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
+		# If configured, create private cleaned output path and save dataframe to path
+		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
+			outputFilePath = os.path.join(self.cleanedFolderPath_private, self.relativeInputFilePath)
+			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
+			df.to_csv(outputFilePath, index=False)
 
-			# Create the target variable
-			df["churn"] = df["plan_player_lastseen"].apply(lambda x: 1 if x >= 1209600 else 0)
+		# If configured, create public cleaned output path and save dataframe without UUID's to path
+		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
+			outputFilePath = os.path.join(self.cleanedFolderPath_public, self.relativeInputFilePath)
+			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
+			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
 
-			# If configured, create private output path and save dataframe to path
-			if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.FINAL, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.outputFolderPath_private, dataRelativeFilePath)
-				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-				df.to_csv(outputFilePath, index=False)
+		# Derived Feature: Relative playtime between total and month (how much of the playtime was this month)
+		df["plan_player_relativePlaytime_totalmonth"] = df["plan_player_time_total_raw"].astype(float) / df["plan_player_time_month_raw"].astype(float)
 
-			# If configured, create public output path and save dataframe without UUID's to path
-			if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.FINAL, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.outputFolderPath_public, dataRelativeFilePath)
-				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-				df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
+		# Derived Feature: Relative playtime between week and month (how much of the month was this week)
+		df["plan_player_relativePlaytime_weekmonth"] = df["plan_player_time_week_raw"].astype(float) / df["plan_player_time_month_raw"].astype(float)
 
-			# If configured, save the dataframe
-			if self.storageMode == McaStorageMode.INSTANCE:
-				self.dfdict[recordingTimestamp] = df
+		# Derived Feature: Relative playtime between day and week (how much of the week was this day)
+		df["plan_player_relativePlaytime_dayweek"] = df["plan_player_time_day_raw"].astype(float) / df["plan_player_time_week_raw"].astype(float)
+
+		# Fix missing / infinities
+		df.replace([np.inf, -np.inf], np.nan, inplace=True)
+		df.fillna(0, inplace=True)
+
+		# If configured, create private featurized output path and save dataframe to path
+		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
+			outputFilePath = os.path.join(self.featurizedFolderPath_private, self.relativeInputFilePath)
+			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
+			df.to_csv(outputFilePath, index=False)
+
+		# If configured, create public featurized output path and save dataframe without UUID's to path
+		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
+			outputFilePath = os.path.join(self.featurizedFolderPath_public, self.relativeInputFilePath)
+			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
+			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
+
+		# Create the target variable
+		df["churn"] = df["plan_player_lastseen"].apply(lambda x: 1 if x >= 1209600 else 0)
+
+		# If configured, create private output path and save dataframe to path
+		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.FINAL, McaOutputMode.ALL):
+			outputFilePath = os.path.join(self.outputFolderPath_private, self.relativeInputFilePath)
+			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
+			df.to_csv(outputFilePath, index=False)
+
+		# If configured, create public output path and save dataframe without UUID's to path
+		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.FINAL, McaOutputMode.ALL):
+			outputFilePath = os.path.join(self.outputFolderPath_public, self.relativeInputFilePath)
+			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
+			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
+
+		# If configured, save the dataframe
+		if self.storageMode == McaStorageMode.INSTANCE:
+			self.dfdict[recordingTimestamp] = df
 
 	def analyzeData(self, timestamp: int):
 		# Check that we have instance storage
