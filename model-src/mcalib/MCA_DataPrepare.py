@@ -17,7 +17,6 @@ MODULE/PACKAGE IMPORTS
 import os
 import re
 import hashlib
-from glob import glob
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
@@ -27,7 +26,6 @@ import pandas as pd
 
 # Output/Display
 from enum import Enum
-from tqdm import tqdm
 
 '''
 ENUM DEFINITIONS
