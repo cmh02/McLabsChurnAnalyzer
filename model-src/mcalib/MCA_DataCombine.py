@@ -55,14 +55,19 @@ class McaDataCombine:
 		self.storageMode = storageMode
 		self.autoCombine = autoCombine
 
-		# Build output directory path
+		# Create directory paths
 		self.timestampFolderPath1 = os.path.dirname(self.inputFilePath1)
 		self.timestampFolderPath2 = os.path.dirname(self.inputFilePath2)
-		self.preparedFolderPath = os.path.dirname(self.timestampFolderPath1)
+		self.preparedPrivateFolderPath = os.path.dirname(self.timestampFolderPath1)
+		self.preparedFolderPath = os.path.dirname(self.preparedPrivateFolderPath)
 		self.dataFolderPath = os.path.dirname(self.preparedFolderPath)
 		self.outputFolderPath = os.path.join(self.dataFolderPath, "combined")
 		self.outputFolderPathPublic = os.path.join(self.outputFolderPath, "public")
 		self.outputFolderPathPrivate = os.path.join(self.outputFolderPath, "private")
+
+		# Create output directories if they do not exist
+		os.makedirs(self.outputFolderPathPublic, exist_ok=True)
+		os.makedirs(self.outputFolderPathPrivate, exist_ok=True)
 
 		# Print our initial configuration
 		print(f"A New MCA Data Combiner has been created!")
@@ -89,23 +94,23 @@ class McaDataCombine:
 		self.df = pd.merge(df1, df2, on='UUID', suffixes=('_t1', '_t2'))
 
 		# Get change in balance
-		self.df['balance_change'] = np.abs(self.df['plan_player_balance_t2'] - self.df['plan_player_balance_t1'])
+		self.df['balance_change'] = np.abs(self.df['balance_t2'] - self.df['balance_t1'])
 
 		# Get change in lw metrics
-		self.df['lw_rev_total_change'] = np.abs(self.df['plan_player_lw_revenue_total_t2'] - self.df['plan_player_lw_revenue_total_t1'])
-		self.df['lw_rev_phase_change'] = np.abs(self.df['plan_player_lw_revenue_phase_t2'] - self.df['plan_player_lw_revenue_phase_t1'])
+		self.df['lw_rev_total_change'] = np.abs(self.df['lw_rev_total_t2'] - self.df['lw_rev_total_t1'])
+		self.df['lw_rev_phase_change'] = np.abs(self.df['lw_rev_phase_t2'] - self.df['lw_rev_phase_t1'])
 
 		# Get change in leaderboard metrics
-		self.df['leaderboard_position_chems_all_change'] = np.abs(self.df['plan_player_leaderboard_position_chems_all_t2'] - self.df['plan_player_leaderboard_position_chems_all_t1'])
-		self.df['leaderboard_position_chems_week_change'] = np.abs(self.df['plan_player_leaderboard_position_chems_week_t2'] - self.df['plan_player_leaderboard_position_chems_week_t1'])
-		self.df['leaderboard_position_police_all_change'] = np.abs(self.df['plan_player_leaderboard_position_police_all_t2'] - self.df['plan_player_leaderboard_position_police_all_t1'])
-		self.df['leaderboard_position_police_week_change'] = np.abs(self.df['plan_player_leaderboard_position_police_week_t2'] - self.df['plan_player_leaderboard_position_police_week_t1'])
+		self.df['leaderboard_position_chems_all_change'] = np.abs(self.df['leaderboard_position_chems_all_t2'] - self.df['leaderboard_position_chems_all_t1'])
+		self.df['leaderboard_position_chems_week_change'] = np.abs(self.df['leaderboard_position_chems_week_t2'] - self.df['leaderboard_position_chems_week_t1'])
+		self.df['leaderboard_position_police_all_change'] = np.abs(self.df['leaderboard_position_police_all_t2'] - self.df['leaderboard_position_police_all_t1'])
+		self.df['leaderboard_position_police_week_change'] = np.abs(self.df['leaderboard_position_police_week_t2'] - self.df['leaderboard_position_police_week_t1'])
 
 		# Get change in rank metrics
-		self.df['chemrank_change'] = np.abs(self.df['plan_player_chemrank_t2'] - self.df['plan_player_chemrank_t1'])
-		self.df['policerank_change'] = np.abs(self.df['plan_player_policerank_t2'] - self.df['plan_player_policerank_t1'])
-		self.df['donorrank_change'] = np.abs(self.df['plan_player_donorrank_t2'] - self.df['plan_player_donorrank_t1'])
-		self.df['goldrank_change'] = np.abs(self.df['plan_player_goldrank_t2'] - self.df['plan_player_goldrank_t1'])
+		self.df['chemrank_change'] = np.abs(self.df['chemrank_t2'] - self.df['chemrank_t1'])
+		self.df['policerank_change'] = np.abs(self.df['policerank_t2'] - self.df['policerank_t1'])
+		self.df['donorrank_change'] = np.abs(self.df['donorrank_t2'] - self.df['donorrank_t1'])
+		self.df['goldrank_change'] = np.abs(self.df['goldrank_t2'] - self.df['goldrank_t1'])
 
 		# Derive target variables based on t1 and t2 active status (binary addition)
 		self.df['churn'] = self.df["active_t1"] * 2 + self.df["active_t2"]
