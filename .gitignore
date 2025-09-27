@@ -209,6 +209,7 @@ data/combined/private/*/*.csv
 data/cleaned/private/*/*.csv
 data/featurized/private/*/*.csv
 data/targetted/private/*/*.csv
+data/prepared/private/*/*.csv
 
 # DS Store
 data/.DS_Store
