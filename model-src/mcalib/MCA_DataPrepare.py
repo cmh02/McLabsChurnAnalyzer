@@ -71,10 +71,6 @@ class McaDataPrepare:
 		if not self.MCA_PEPPERKEY:
 			raise ValueError("Missing required environment variable: MCA_PEPPERKEY")
 		
-		# If configured, create base dictionary for storing dataframes
-		if self.storageMode == McaStorageMode.INSTANCE:
-			self.dfdict = {}
-		
 		# Print our initial configuration
 		print(f"A New MCA Data Preparer has been created!")
 		print(f"-> Input File Path: {self.inputFilePath}")
@@ -266,19 +262,15 @@ class McaDataPrepare:
 
 		# If configured, save the dataframe
 		if self.storageMode == McaStorageMode.INSTANCE:
-			self.dfdict[recordingTimestamp] = df
+			self.df = df
 
-	def analyzeData(self, timestamp: int):
+	def analyzeData(self):
 		# Check that we have instance storage
 		if self.storageMode != McaStorageMode.INSTANCE:
 			print(f"Data Analysis is not possible in {self.storageMode} mode.")
-		
-		# Check that the timestamp exists
-		if timestamp not in self.dfdict.keys():
-			print(f"No data found for timestamp {timestamp}. Available timestamps: {list(self.dfdict.keys())}")
 
 		# Print analysis for dataframe
-		print(f"{self.dfdict[timestamp].drop(columns=['UUID']).describe().T.map(lambda x: f"{x:.4f}")}")
+		print(f"{self.df.drop(columns=['UUID']).describe().T.map(lambda x: f"{x:.4f}")}")
 
 	def _planDateToSecondsSince(self, planDateString: str, untilUnixTimeStamp: float) -> int:
 		# Convert the unix timestamp into a datetime object
