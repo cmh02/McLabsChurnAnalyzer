@@ -2,10 +2,10 @@
 MCA DataPrepare Module
 Author: @cmh02
 
-This module will provide a pipeline for data preparation tasks:
+This module will provide a pipeline for per-timestamp data preparation tasks:
 - Data Anonymization and Cleaning
 - Feature Engineering
-- Target Variable Creation
+- Active Variable Creation
 '''
 
 
@@ -248,7 +248,7 @@ class McaDataPrepare:
 			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
 
 		# Create the target variable
-		df["churn"] = df["plan_player_lastseen"].apply(lambda x: 1 if x >= 1209600 else 0)
+		df["active"] = df["plan_player_lastseen"].apply(lambda x: 1 if x >= 1209600 else 0)
 
 		# If configured, create private output path and save dataframe to path
 		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.FINAL, McaOutputMode.ALL):
