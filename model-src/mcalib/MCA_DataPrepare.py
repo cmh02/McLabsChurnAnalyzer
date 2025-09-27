@@ -23,9 +23,6 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 
-# Output/Display
-from enum import Enum
-
 # Custom
 from mcalib import McaOutputMode, McaStorageMode, McaHashMode
 
