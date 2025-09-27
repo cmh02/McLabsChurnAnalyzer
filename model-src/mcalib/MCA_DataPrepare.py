@@ -57,7 +57,7 @@ class McaDataPrepare:
 		self.inputFilePath = inputFilePath
 		self.timestampFolderPath = os.path.dirname(inputFilePath)
 		self.gatherDataFolderPath = os.path.dirname(self.timestampFolderPath)
-		self.dataFolderPath = os.path.dirname(os.path.dirname(inputFilePath))
+		self.dataFolderPath = os.path.dirname(self.gatherDataFolderPath)
 		self.relativeInputFilePath = os.path.relpath(self.inputFilePath, self.gatherDataFolderPath)
 		self.outputMode = outputMode
 		self.storageMode = storageMode
@@ -71,26 +71,8 @@ class McaDataPrepare:
 		if not self.MCA_PEPPERKEY:
 			raise ValueError("Missing required environment variable: MCA_PEPPERKEY")
 		
-		# Print our initial configuration
-		print(f"A New MCA Data Preparer has been created!")
-		print(f"-> Input File Path: {self.inputFilePath}")
-		print(f"-> Timestamp Folder Path: {self.timestampFolderPath}")
-		print(f"-> Gather Data Folder Path: {self.gatherDataFolderPath}")
-		print(f"-> Data Directory Path: {self.dataFolderPath}")
-		print(f"-> Relative Input File Path: {self.relativeInputFilePath}")
-		print(f"-> AutoPrepare Mode: {autoPrepare}")
-		print(f"-> Output Mode: {self.outputMode}")
-		print(f"-> Storage Mode: {self.storageMode}")
-		print(f"-> Hash Mode: {self.hashMode}")
-
-		# If configured, run the data preparation steps
-		if autoPrepare:
-			self.prepareData()
-
-	def prepareData(self):
-
 		# Set up intermediate output paths depending on output type
-		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
+		if self.outputMode in [McaOutputMode.PUBLIC, McaOutputMode.ALL]:
 
 			# Create anonymized folder path if hashing is enabled
 			if self.hashMode != McaHashMode.NONE:
@@ -103,7 +85,7 @@ class McaDataPrepare:
 			self.featurizedFolderPath_public = os.path.join(self.dataFolderPath, "featurized/public/")
 			os.makedirs(self.featurizedFolderPath_public, exist_ok=True)
 
-		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
+		if self.outputMode in [McaOutputMode.PRIVATE, McaOutputMode.ALL]:
 
 			# Create anonymized folder path if hashing is enabled
 			if self.hashMode != McaHashMode.NONE:
@@ -116,13 +98,42 @@ class McaDataPrepare:
 			self.featurizedFolderPath_private = os.path.join(self.dataFolderPath, "featurized/private/")
 			os.makedirs(self.featurizedFolderPath_private, exist_ok=True)
 
-		# Set up output folder path unless output mode is NONE or INSTANCE
-		if self.outputMode not in (McaOutputMode.NONE, McaOutputMode.FINAL):
+		# Set up output folder path unless output mode is NONE
+		if self.outputMode not in [McaOutputMode.NONE]:
 			self.outputFolderPath_public = os.path.join(self.dataFolderPath, "prepared/public/")
 			os.makedirs(self.outputFolderPath_public, exist_ok=True)
 
 			self.outputFolderPath_private = os.path.join(self.dataFolderPath, "prepared/private/")
 			os.makedirs(self.outputFolderPath_private, exist_ok=True)
+		
+		# Print our initial configuration
+		print(f"A New MCA Data Preparer has been created!")
+		print(f"-> AutoPrepare Mode: {autoPrepare}")
+		print(f"-> Output Mode: {self.outputMode}")
+		print(f"-> Storage Mode: {self.storageMode}")
+		print(f"-> Hash Mode: {self.hashMode}")
+		print(f"-> Input File Path: {self.inputFilePath}")
+		print(f"-> Timestamp Folder Path: {self.timestampFolderPath}")
+		print(f"-> Gather Data Folder Path: {self.gatherDataFolderPath}")
+		print(f"-> Data Directory Path: {self.dataFolderPath}")
+		print(f"-> Relative Input File Path: {self.relativeInputFilePath}")
+		if self.hashMode != McaHashMode.NONE:
+			print(f"-> Anonymized Folder Path (Public): {self.anonymizedFolderPath_public}")
+			print(f"-> Anonymized Folder Path (Private): {self.anonymizedFolderPath_private}")
+		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
+			print(f"-> Cleaned Folder Path (Public): {self.cleanedFolderPath_public}")
+			print(f"-> Cleaned Folder Path (Private): {self.cleanedFolderPath_private}")
+			print(f"-> Featurized Folder Path (Public): {self.featurizedFolderPath_public}")
+			print(f"-> Featurized Folder Path (Private): {self.featurizedFolderPath_private}")
+		if self.outputMode not in [McaOutputMode.NONE]:
+			print(f"-> Output Folder Path (Public): {self.outputFolderPath_public}")
+			print(f"-> Output Folder Path (Private): {self.outputFolderPath_private}")
+
+		# If configured, run the data preparation steps
+		if autoPrepare:
+			self.prepareData()
+
+	def prepareData(self):
 
 		# Read the input CSV file
 		df = pd.read_csv(self.inputFilePath)
