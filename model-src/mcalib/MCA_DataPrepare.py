@@ -257,7 +257,7 @@ class McaDataPrepare:
 			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
 
 		# Create the target variable
-		df["active"] = df["plan_player_lastseen"].apply(lambda x: 1 if x >= 1209600 else 0)
+		df["active"] = df["plan_player_lastseen"].apply(lambda x: 0 if x >= 1209600 else 1)
 
 		# If configured, create private output path and save dataframe to path
 		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.FINAL, McaOutputMode.ALL):
