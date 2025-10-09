@@ -74,7 +74,7 @@ class McaDataUtils:
 		return df
 	
 	@staticmethod
-	def getDfForTimestamp(timestamp: float, dataDir: str=f"data/gatheringoutput") -> pd.DataFrame:
+	def getDfForTimestamp(timestamp: float, dataDir: str=f"../data/gatheringoutput") -> pd.DataFrame:
 		'''
 		Load and return the DataFrame for a given playerdata timestamp.
 		'''
