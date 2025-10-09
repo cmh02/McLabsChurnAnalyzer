@@ -72,3 +72,20 @@ class McaDataUtils:
 		else:
 			raise ValueError(f"Unsupported MCA hash mode: {hashMode}")
 		return df
+	
+	@staticmethod
+	def getDfForTimestamp(timestamp: float, dataDir: str=f"data/gatheringoutput") -> pd.DataFrame:
+		'''
+		Load and return the DataFrame for a given playerdata timestamp.
+		'''
+
+		# Construct file path
+		filePath = os.path.join(dataDir, f"{timestamp}/PlayerData.csv")
+
+		# Check if file exists
+		if not os.path.exists(filePath):
+			raise FileNotFoundError(f"Playerdata file not found at path: {filePath}")
+
+		# Load and return the DataFrame
+		df = pd.read_csv(filePath)
+		return df
