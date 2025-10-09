@@ -41,8 +41,8 @@ class McaTargetPipeline:
 		df = currentDf.merge(futureDf[['UUID', 'active']], on='UUID', how='outer', suffixes=('_t2', '_t3'))
 
 		# Fill missing activity values with 0 (indicating inactivity)
-		df['active_t2'].fillna(0, inplace=True)
-		df['active_t3'].fillna(0, inplace=True)
+		df['active_t2'] = df['active_t2'].fillna(0)
+		df['active_t3'] = df['active_t3'].fillna(0)
 
 		# Derive target variables based on t2 and t3 active status (binary addition)
 		df['churn'] = df["active_t2"] * 2 + df["active_t3"]
