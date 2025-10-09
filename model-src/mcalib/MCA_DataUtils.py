@@ -57,12 +57,18 @@ class McaDataUtils:
 		# Check if UUID column exists
 		if 'UUID' not in df.columns:
 			raise ValueError("DataFrame does not contain 'UUID' column.")
+		
+		# Get hash pepper from env
+		load_dotenv()
+		hashPepper = os.getenv("MCA_PEPPERKEY", "")
+		if hashPepper is None or hashPepper == "":
+			raise ValueError("MCA_PEPPERKEY environment variable is not set.")
 
 		# Hash the UUIDs based on the specified hash mode and return
 		if hashMode == McaHashMode.SHA256:
-			df["UUID"] = df["UUID"].apply(lambda x: hashlib.sha256(x.encode()).hexdigest())
+			df["UUID"] = df["UUID"].apply(lambda x: hashlib.sha256((x + hashPepper).encode()).hexdigest())
 		elif hashMode == McaHashMode.MD5:
-			df["UUID"] = df["UUID"].apply(lambda x: hashlib.md5(x.encode()).hexdigest())
+			df["UUID"] = df["UUID"].apply(lambda x: hashlib.md5((x + hashPepper).encode()).hexdigest())
 		else:
 			raise ValueError(f"Unsupported MCA hash mode: {hashMode}")
 		return df
