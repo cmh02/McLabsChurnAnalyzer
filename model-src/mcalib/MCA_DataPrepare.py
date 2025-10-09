@@ -13,131 +13,24 @@ MODULE/PACKAGE IMPORTS
 '''
 
 # System
-import os
 import re
-import hashlib
-from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
 # Data
 import numpy as np
 import pandas as pd
 
-# Custom
-from mcalib import McaOutputMode, McaStorageMode, McaHashMode
-
-'''
-CLASS DEFINITION
-'''
 
 class McaDataPrepare:
-	def __init__(self, inputFilePath: str, autoPrepare: bool=True, outputMode: McaOutputMode=McaOutputMode.ALL, storageMode: McaStorageMode=McaStorageMode.NONE, hashMode: McaHashMode=McaHashMode.NONE):
+	'''
+	MCA Data Preparation Class
+	'''
 
-		# Save instance configuration
-		self.inputFilePath = inputFilePath
-		self.timestampFolderPath = os.path.dirname(inputFilePath)
-		self.gatherDataFolderPath = os.path.dirname(self.timestampFolderPath)
-		self.dataFolderPath = os.path.dirname(self.gatherDataFolderPath)
-		self.relativeInputFilePath = os.path.relpath(self.inputFilePath, self.gatherDataFolderPath)
-		self.outputMode = outputMode
-		self.storageMode = storageMode
-		self.hashMode = hashMode
-
-		# Load environment file using python-dotenv
-		load_dotenv(dotenv_path="../env/.env")
-
-		# Load environmental variables
-		self.MCA_PEPPERKEY = os.getenv("MCA_PEPPERKEY")
-		if not self.MCA_PEPPERKEY:
-			raise ValueError("Missing required environment variable: MCA_PEPPERKEY")
-		
-		# Set up intermediate output paths depending on output type
-		if self.outputMode in [McaOutputMode.PUBLIC, McaOutputMode.ALL]:
-
-			# Create anonymized folder path if hashing is enabled
-			if self.hashMode != McaHashMode.NONE:
-				self.anonymizedFolderPath_public = os.path.join(self.dataFolderPath, "anonymized/public/")
-				os.makedirs(self.anonymizedFolderPath_public, exist_ok=True)
-
-			self.cleanedFolderPath_public = os.path.join(self.dataFolderPath, "cleaned/public/")
-			os.makedirs(self.cleanedFolderPath_public, exist_ok=True)
-
-			self.featurizedFolderPath_public = os.path.join(self.dataFolderPath, "featurized/public/")
-			os.makedirs(self.featurizedFolderPath_public, exist_ok=True)
-
-		if self.outputMode in [McaOutputMode.PRIVATE, McaOutputMode.ALL]:
-
-			# Create anonymized folder path if hashing is enabled
-			if self.hashMode != McaHashMode.NONE:
-				self.anonymizedFolderPath_private = os.path.join(self.dataFolderPath, "anonymized/private/")
-				os.makedirs(self.anonymizedFolderPath_private, exist_ok=True)
-
-			self.cleanedFolderPath_private = os.path.join(self.dataFolderPath, "cleaned/private/")
-			os.makedirs(self.cleanedFolderPath_private, exist_ok=True)
-
-			self.featurizedFolderPath_private = os.path.join(self.dataFolderPath, "featurized/private/")
-			os.makedirs(self.featurizedFolderPath_private, exist_ok=True)
-
-		# Set up output folder path unless output mode is NONE
-		if self.outputMode not in [McaOutputMode.NONE]:
-			self.outputFolderPath_public = os.path.join(self.dataFolderPath, "prepared/public/")
-			os.makedirs(self.outputFolderPath_public, exist_ok=True)
-
-			self.outputFolderPath_private = os.path.join(self.dataFolderPath, "prepared/private/")
-			os.makedirs(self.outputFolderPath_private, exist_ok=True)
-		
-		# Print our initial configuration
-		print(f"A New MCA Data Preparer has been created!")
-		print(f"-> AutoPrepare Mode: {autoPrepare}")
-		print(f"-> Output Mode: {self.outputMode}")
-		print(f"-> Storage Mode: {self.storageMode}")
-		print(f"-> Hash Mode: {self.hashMode}")
-		print(f"-> Input File Path: {self.inputFilePath}")
-		print(f"-> Timestamp Folder Path: {self.timestampFolderPath}")
-		print(f"-> Gather Data Folder Path: {self.gatherDataFolderPath}")
-		print(f"-> Data Directory Path: {self.dataFolderPath}")
-		print(f"-> Relative Input File Path: {self.relativeInputFilePath}")
-		if self.hashMode != McaHashMode.NONE:
-			print(f"-> Anonymized Folder Path (Public): {self.anonymizedFolderPath_public}")
-			print(f"-> Anonymized Folder Path (Private): {self.anonymizedFolderPath_private}")
-		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-			print(f"-> Cleaned Folder Path (Public): {self.cleanedFolderPath_public}")
-			print(f"-> Cleaned Folder Path (Private): {self.cleanedFolderPath_private}")
-			print(f"-> Featurized Folder Path (Public): {self.featurizedFolderPath_public}")
-			print(f"-> Featurized Folder Path (Private): {self.featurizedFolderPath_private}")
-		if self.outputMode not in [McaOutputMode.NONE]:
-			print(f"-> Output Folder Path (Public): {self.outputFolderPath_public}")
-			print(f"-> Output Folder Path (Private): {self.outputFolderPath_private}")
-
-		# If configured, run the data preparation steps
-		if autoPrepare:
-			self.prepareData()
-
-	def prepareData(self):
-
-		# Read the input CSV file
-		df = pd.read_csv(self.inputFilePath)
-
-		# If hashing is enabled, anonymize the UUID column (UUID -> hash(PEPPER + UUID))
-		if self.hashMode != McaHashMode.NONE:
-
-			# Hash the UUID's using configured hash mode
-			if self.hashMode == McaHashMode.SHA256:
-				df['UUID'] = [hashlib.sha256(f"{self.MCA_PEPPERKEY}:{uuid}".encode()).hexdigest() for uuid in df['UUID']]
-			else:
-				raise ValueError(f"Hash Mode Not Implemented: {self.hashMode}")
-
-			# If configured, create private hashed output path and save dataframe to path
-			if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.anonymizedFolderPath_private, self.relativeInputFilePath)
-				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-				df.to_csv(outputFilePath, index=False)
-
-			# If configured, create public hashed output path and save dataframe without UUID's to path
-			if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-				outputFilePath = os.path.join(self.anonymizedFolderPath_public, self.relativeInputFilePath)
-				os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-				df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
+	@staticmethod
+	def prepareData(df: pd.DataFrame, dfTimestamp: float) -> pd.DataFrame:
+		'''
+		General data preparation for a given playerdata timestamp.
+		'''
 
 		# Replace <none> with NULL
 		df.replace("<none>", pd.NA, inplace=True)
@@ -193,23 +86,10 @@ class McaDataPrepare:
 		df.dropna(subset=["plan_player_lastseen"], inplace=True)
 
 		# Convert last seen times into seconds since last seen
-		recordingTimestamp = float(os.path.basename(os.path.dirname(self.inputFilePath)))
-		df["plan_player_lastseen"] = df["plan_player_lastseen"].apply(lambda x: self._planDateToSecondsSince(planDateString=x, untilUnixTimeStamp=recordingTimestamp))
+		df["plan_player_lastseen"] = df["plan_player_lastseen"].apply(lambda x: McaDataPrepare._planDateToSecondsSince(planDateString=x, untilUnixTimeStamp=dfTimestamp))
 
 		# Remove any extra text from balance column
 		df["balance"] = df["balance"].replace({"dollars": "", "dollar": "", "money": "", "Dollars": "", "Dollar": "", "Money": ""}, regex=True)
-
-		# If configured, create private cleaned output path and save dataframe to path
-		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
-			outputFilePath = os.path.join(self.cleanedFolderPath_private, self.relativeInputFilePath)
-			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-			df.to_csv(outputFilePath, index=False)
-
-		# If configured, create public cleaned output path and save dataframe without UUID's to path
-		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-			outputFilePath = os.path.join(self.cleanedFolderPath_public, self.relativeInputFilePath)
-			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
 
 		# Derived Feature: Relative playtime between total and month (how much of the playtime was this month)
 		df["plan_player_relativePlaytime_totalmonth"] = df["plan_player_time_total_raw"].astype(float) / df["plan_player_time_month_raw"].astype(float)
@@ -224,46 +104,18 @@ class McaDataPrepare:
 		df.replace([np.inf, -np.inf], np.nan, inplace=True)
 		df.fillna(0, inplace=True)
 
-		# If configured, create private featurized output path and save dataframe to path
-		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.ALL):
-			outputFilePath = os.path.join(self.featurizedFolderPath_private, self.relativeInputFilePath)
-			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-			df.to_csv(outputFilePath, index=False)
-
-		# If configured, create public featurized output path and save dataframe without UUID's to path
-		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.ALL):
-			outputFilePath = os.path.join(self.featurizedFolderPath_public, self.relativeInputFilePath)
-			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
-
-		# Create the target variable
+		# Create "active" variable (1 if last seen within 14 days, else 0)
 		df["active"] = df["plan_player_lastseen"].apply(lambda x: 0 if x >= 1209600 else 1)
 
-		# If configured, create private output path and save dataframe to path
-		if self.outputMode in (McaOutputMode.PRIVATE, McaOutputMode.FINAL, McaOutputMode.ALL):
-			outputFilePath = os.path.join(self.outputFolderPath_private, self.relativeInputFilePath)
-			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-			df.to_csv(outputFilePath, index=False)
+		# Return the prepared dataframe
+		return df
 
-		# If configured, create public output path and save dataframe without UUID's to path
-		if self.outputMode in (McaOutputMode.PUBLIC, McaOutputMode.FINAL, McaOutputMode.ALL):
-			outputFilePath = os.path.join(self.outputFolderPath_public, self.relativeInputFilePath)
-			os.makedirs(os.path.dirname(outputFilePath), exist_ok=True)
-			df.drop(columns=['UUID']).to_csv(outputFilePath, index=False)
+	@staticmethod
+	def _planDateToSecondsSince(planDateString: str, untilUnixTimeStamp: float) -> int:
+		'''
+		Convert a plan date string into seconds since that date from a given unix timestamp.
+		'''
 
-		# If configured, save the dataframe
-		if self.storageMode == McaStorageMode.INSTANCE:
-			self.df = df
-
-	def analyzeData(self):
-		# Check that we have instance storage
-		if self.storageMode != McaStorageMode.INSTANCE:
-			print(f"Data Analysis is not possible in {self.storageMode} mode.")
-
-		# Print analysis for dataframe
-		print(f"{self.df.drop(columns=['UUID']).describe().T.map(lambda x: f"{x:.4f}")}")
-
-	def _planDateToSecondsSince(self, planDateString: str, untilUnixTimeStamp: float) -> int:
 		# Convert the unix timestamp into a datetime object
 		untilDateTime = datetime.fromtimestamp(untilUnixTimeStamp)
 
