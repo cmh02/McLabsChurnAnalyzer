@@ -47,6 +47,9 @@ class McaTargetPipeline:
 		# Derive target variables based on t2 and t3 active status (binary addition)
 		df['churn'] = df["active_t2"] * 2 + df["active_t3"]
 
+		# Drop any rows with NaN values since we don't know at t2 that they will exist at t3
+		df = df.dropna(axis=0).reset_index(drop=True)
+
 		# If only the target variable is requested, return that
 		if onlyReturnTarget:
 			return df[['UUID', 'churn']]

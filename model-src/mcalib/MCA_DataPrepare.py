@@ -100,12 +100,12 @@ class McaDataPrepare:
 		# Derived Feature: Relative playtime between day and week (how much of the week was this day)
 		df["plan_player_relativePlaytime_dayweek"] = df["plan_player_time_day_raw"].astype(float) / df["plan_player_time_week_raw"].astype(float)
 
-		# Fix missing / infinities
-		df.replace([np.inf, -np.inf], np.nan, inplace=True)
-		df.fillna(0, inplace=True)
-
 		# Create "active" variable (1 if last seen within 14 days, else 0)
-		df["active"] = df["plan_player_lastseen"].apply(lambda x: 0 if x >= 1209600 else 1)
+		df["active"] = df["plan_player_lastseen"].apply(lambda x: 1 if x < 1209600 else 0)
+
+		# Fix missing / infinities
+		df = df.replace([np.inf, -np.inf], np.nan)
+		df = df.fillna(0)
 
 		# Return the prepared dataframe
 		return df
