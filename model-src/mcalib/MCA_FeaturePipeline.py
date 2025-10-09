@@ -54,9 +54,6 @@ class McaFeaturePipeline:
 		df['donorrank_change'] = np.abs(df['donorrank_t2'] - df['donorrank_t1'])
 		df['goldrank_change'] = np.abs(df['goldrank_t2'] - df['goldrank_t1'])
 
-		# Drop unneeded columns
-		df.drop(columns=['active_t1', 'active_t2'], inplace=True)
-
 		# Drop all columns with _t1 suffix
 		t1Cols = [col for col in df.columns if col.endswith('_t1')]
 		df.drop(columns=t1Cols, inplace=True)
