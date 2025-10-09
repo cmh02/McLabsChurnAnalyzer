@@ -3,12 +3,6 @@ MCA DataCombine Module
 Author: @cmh02
 
 This module will provide a Feature Engineering pipeline for cross-timestamp data preparation tasks:
-
-For the target variable, we observe the following classes:
-- Inactive (0): Player has not been active for either timestamp
-- Recovered (1): Player was inactive in t1, but active in t2
-- Churned (2): Player was active in t1, but inactive in t2
-- Active (3): Player has been active in both timestamps
 '''
 
 '''
