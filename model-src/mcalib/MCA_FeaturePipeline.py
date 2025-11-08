@@ -55,7 +55,10 @@ class McaFeaturePipeline:
 		df['goldrank_change'] = np.abs(df['goldrank_t2'] - df['goldrank_t1'])
 
 		# Replace NaNs with 0 (indicating no change)
-		df = df.fillna(0)
+		excludedColumns = ['plan_player_favorite_server_t1', 'plan_player_favorite_server_t2']
+		df = df.replace([np.inf, -np.inf], np.nan)
+		df = df.fillna({col: 0 for col in df.columns if col not in excludedColumns})
+		df = df.fillna({col: "Spawn" for col in excludedColumns})
 
 		# Drop all columns with _t1 suffix
 		t1Cols = [col for col in df.columns if col.endswith('_t1')]

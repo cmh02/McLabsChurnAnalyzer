@@ -91,6 +91,9 @@ class McaDataPrepare:
 		# Remove any extra text from balance column
 		df["balance"] = df["balance"].replace({"dollars": "", "dollar": "", "money": "", "Dollars": "", "Dollar": "", "Money": ""}, regex=True)
 
+		# Make sure favorite server is a str
+		df["plan_player_favorite_server"] = df["plan_player_favorite_server"].astype(str)
+
 		# Derived Feature: Relative playtime between total and month (how much of the playtime was this month)
 		df["plan_player_relativePlaytime_totalmonth"] = df["plan_player_time_total_raw"].astype(float) / df["plan_player_time_month_raw"].astype(float)
 
@@ -103,9 +106,11 @@ class McaDataPrepare:
 		# Create "active" variable (1 if last seen within 14 days, else 0)
 		df["active"] = df["plan_player_lastseen"].apply(lambda x: 1 if x < 1209600 else 0)
 
-		# Fix missing / infinities
+		# Fix missing / infinities in numeric columns
+		excludedColumns = ["plan_player_favorite_server"]
 		df = df.replace([np.inf, -np.inf], np.nan)
-		df = df.fillna(0)
+		df = df.fillna({col: 0 for col in df.columns if col not in excludedColumns})
+		df = df.fillna({col: "Spawn" for col in excludedColumns})
 
 		# Return the prepared dataframe
 		return df
