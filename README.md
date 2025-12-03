@@ -8,11 +8,14 @@ This tool will implement a machine learning model to predict the churn of player
 
 ## Project Documentation Overview
 
-| Project Module    | README                                                                                           | Description                                                |
-| ----------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| Entire Project    | [README.md](README.md)                                                                              | The entire project repository including all modules below. |
-| Gathering Skripts | [ README_gatheringskripts.md](gathering-skripts/README_gatheringskripts.md "Gathering Skripts Readme") | Skripts to extract player data from the server.            |
-| Model             | [README_model.md](model-src/README_model.md "Model Readme")                                            | The Machine Learning Model                                 |
+| Project Module      | README                                                                                           | Description                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Entire Project      | [README.md](README.md)                                                                              | The entire project repository including all modules below.                               |
+| Data Directories    | [README_data.md](data/README_data.md "Data DIrectory Readme")                                          | The data directories provided in the current stage of the project.                       |
+| Gathering Skripts   | [ README_gatheringskripts.md](gathering-skripts/README_gatheringskripts.md "Gathering Skripts Readme") | Skripts to extract player data from the server.                                          |
+| Environmental Files | [README_env.md](env/README_env.md "Environmental Variables Readme")                                    | Overview of environmental files needed for this project.                                 |
+| Model Internals     | [README_modelinternals.md](model-internals/README_modelinternals.md "Model Internals Readme")          | Description of various model saves in the model internals directory.                     |
+| Model Source        | [README_model.md](model-src/README_model.md "Model Source code README")                                | Details about source code structure for this project including submodules and pipelines. |
 
 ## Project Introduction
 

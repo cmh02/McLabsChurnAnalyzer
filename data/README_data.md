@@ -1,11 +1,8 @@
 # MCLabs Churn Analyzer: Data Storage
 
-In this directory, there are several different data folders. Each stores the data at a specific point in the project.
+In the current version of the project, the data directory only contains subdirectories:
 
-| Data Directory                  | Description                                                      | Notes                                                   |
-| ------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
-| [gatheringoutput](gatheringoutput) | Raw output data from gathering skripts.                          | Data files are not published to protect player privacy. |
-| [anonoutput](anonoutput)           | The data after anonymization (UUID's converted to placeholders). |                                                         |
-| [cleaned](cleaned/)                | The data after being passed through several cleaning steps.      |                                                         |
-| [featurized](featurized/)          | The data after feature derivation (engineering).                 |                                                         |
-| [targetized](targetized/)          | The data after churn derivation.                                 |                                                         |
+| Data Directory                  | Description                                       | Notes                                                                                                                                                                                                                     |
+| ------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [gatheringoutput](gatheringoutput) | Raw output data from gathering skripts.           | Data files are not published to protect player privacy.                                                                                                                                                                   |
+| [master](master/)                  | The data after anonymization and concatenization. | Master dataset containing all of the data from[gatheringoutput](gatheringoutput) after cleaning, feature engineering, target derivation, and concatenization. All data is anonymized by removing the UUID for each sample.  |

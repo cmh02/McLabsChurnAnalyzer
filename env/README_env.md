@@ -1,5 +1,7 @@
 # MCLabs Churn Analyzer: Environmental Variables
 
+**NOTE: This directory is no longer used. No hashing is being performed in this stage of the project. However, this directory and environmental files within it are being kept for future structure.**
+
 Our project does include some environmental variables that need to be configured. Within our project structure, we have created a `.env` file that resides inside this directory. The template of this `.env` file can be seen in [.env.example](.env.example), where all keys are defined to some placeholder value.
 
 ### Hashing Pepper Key: `MCA_PEPPERKEY`
